@@ -9,5 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface UserService {
     void saveUser(UserDto userDto, RedirectAttributes ra, HttpServletRequest req, HttpServletResponse res);
+
     User findUserByEmail(String email);
+
+    User find(Long id);
 }
