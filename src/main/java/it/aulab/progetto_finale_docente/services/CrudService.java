@@ -3,14 +3,16 @@ package it.aulab.progetto_finale_docente.services;
 import java.security.Principal;
 import java.util.List;
 
-import jakarta.mail.Multipart;
+import org.springframework.web.multipart.MultipartFile;
 
-public interface CrudService<ReadDto, Model, Key> {
+public interface CrudService<DTO, MODEL, ID> {
+    List<DTO> readAll();
 
-    List <ReadDto> readAll();
-    ReadDto read(Key key);
-    ReadDto create(Model model, Principal principal, Multipart file);
-    ReadDto update(Key key, Model model, Multipart file);
-    void delete(Key key);
+    DTO read(ID key);
 
+    DTO create(MODEL model, Principal principal, MultipartFile file); // Usa MultipartFile
+
+    DTO update(ID key, MODEL model, MultipartFile file); // Usa MultipartFile
+
+    void delete(ID key);
 }

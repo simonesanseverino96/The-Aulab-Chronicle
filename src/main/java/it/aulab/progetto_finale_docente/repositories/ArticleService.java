@@ -1,4 +1,4 @@
-package it.aulab.progetto_finale_docente.services;
+package it.aulab.progetto_finale_docente.repositories;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -18,8 +18,9 @@ import org.springframework.web.server.ResponseStatusException;
 import it.aulab.progetto_finale_docente.dtos.ArticleDto;
 import it.aulab.progetto_finale_docente.models.Article;
 import it.aulab.progetto_finale_docente.models.User;
-import it.aulab.progetto_finale_docente.repositories.ArticleRepository;
-import it.aulab.progetto_finale_docente.repositories.UserRepository;
+import it.aulab.progetto_finale_docente.services.CrudService;
+import it.aulab.progetto_finale_docente.services.CustomUserDetails;
+import it.aulab.progetto_finale_docente.services.ImageService;
 
 @Service
 public class ArticleService implements CrudService<ArticleDto, Article, Long> {
@@ -134,4 +135,5 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
         return dtos;
     }
+
 }
