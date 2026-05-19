@@ -1,4 +1,4 @@
-package it.aulab.progetto_finale_docente.repositories;
+javapackage it.aulab.progetto_finale_docente.repositories;
 
 import org.springframework.data.repository.ListCrudRepository;
 
@@ -7,8 +7,7 @@ import it.aulab.progetto_finale_docente.models.Category;
 public interface CategoryRepository extends ListCrudRepository<Category, Long> {
 }
 
-services/ArticleService.java javapackage it.aulab.progetto_finale_docente.services
-;
+services/ArticleService.java javapackage it.aulab.progetto_finale_docente.services;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import it.aulab.progetto_finale_docente.models.Article;
 import it.aulab.progetto_finale_docente.models.User;
 import it.aulab.progetto_finale_docente.repositories.ArticleRepository;
 import it.aulab.progetto_finale_docente.repositories.UserRepository;
+import it.aulab.progetto_finale_docente.services.ImageService;
 
 @Service
 public class ArticleService implements CrudService<ArticleDto, Article, Long> {
