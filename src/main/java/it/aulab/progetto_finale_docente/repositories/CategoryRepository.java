@@ -1,4 +1,4 @@
-javapackage it.aulab.progetto_finale_docente.repositories;
+package it.aulab.progetto_finale_docente.repositories;
 
 import org.springframework.data.repository.ListCrudRepository;
 
@@ -7,8 +7,8 @@ import it.aulab.progetto_finale_docente.models.Category;
 public interface CategoryRepository extends ListCrudRepository<Category, Long> {
 }
 
-services/ArticleService.java
-javapackage it.aulab.progetto_finale_docente.services;
+services/ArticleService.java javapackage it.aulab.progetto_finale_docente.services
+;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     @Override
     public List<ArticleDto> readAll() {
         List<ArticleDto> dtos = new ArrayList<>();
-        for(Article article : articleRepository.findAll()) {
+        for (Article article : articleRepository.findAll()) {
             dtos.add(modelMapper.map(article, ArticleDto.class));
         }
         return dtos;
@@ -58,11 +58,11 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     @Override
     public ArticleDto read(Long key) {
         Optional<Article> optArticle = articleRepository.findById(key);
-        if(optArticle.isPresent()) {
+        if (optArticle.isPresent()) {
             return modelMapper.map(optArticle.get(), ArticleDto.class);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "Article id=" + key + " not found");
+                    "Article id=" + key + " not found");
         }
     }
 
@@ -72,18 +72,18 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
 
         // Recuperiamo l'utente loggato e lo associamo all'articolo
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null) {
+        if (authentication != null) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = (userRepository.findById(userDetails.getId())).get();
             article.setUser(user);
         }
 
         // Gestione immagine
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             try {
                 CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
                 url = futureUrl.get();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -93,7 +93,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
 
         ArticleDto dto = modelMapper.map(articleRepository.save(article), ArticleDto.class);
 
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             imageService.saveImageOnDB(url, article);
         }
 
@@ -114,7 +114,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     // Ricerca per categoria
     public List<ArticleDto> searchByCategory(it.aulab.progetto_finale_docente.models.Category category) {
         List<ArticleDto> dtos = new ArrayList<>();
-        for(Article article : articleRepository.findByCategory(category)) {
+        for (Article article : articleRepository.findByCategory(category)) {
             dtos.add(modelMapper.map(article, ArticleDto.class));
         }
         return dtos;
@@ -123,7 +123,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     // Ricerca per autore
     public List<ArticleDto> searchByAuthor(User user) {
         List<ArticleDto> dtos = new ArrayList<>();
-        for(Article article : articleRepository.findByUser(user)) {
+        for (Article article : articleRepository.findByUser(user)) {
             dtos.add(modelMapper.map(article, ArticleDto.class));
         }
         return dtos;
@@ -139,7 +139,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     // Ricerca full-text
     public List<ArticleDto> search(String keyword) {
         List<ArticleDto> dtos = new ArrayList<>();
-        for(Article article : articleRepository.search(keyword)) {
+        for (Article article : articleRepository.search(keyword)) {
             dtos.add(modelMapper.map(article, ArticleDto.class));
         }
         return dtos;
