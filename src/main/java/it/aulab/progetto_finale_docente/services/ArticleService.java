@@ -21,7 +21,6 @@ import it.aulab.progetto_finale_docente.models.User;
 import it.aulab.progetto_finale_docente.repositories.ArticleRepository;
 import it.aulab.progetto_finale_docente.repositories.UserRepository;
 
-
 @Service
 public class ArticleService implements CrudService<ArticleDto, Article, Long> {
 
@@ -48,15 +47,14 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
 
     @Override
     public ArticleDto read(Long key) {
-
         Optional<Article> optArticle = articleRepository.findById(key);
         if (optArticle.isPresent()) {
             return modelMapper.map(optArticle.get(), ArticleDto.class);
         } else {
-            throw new ResponseStatusException(Httpstatus.NOT_FOUND,
-                    "Article id="  +key + "not found");
-        }
 
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Article id=" + key + " not found");
+        }
     }
 
     @Override
@@ -64,9 +62,10 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         String url = "";
 
         // Recuperiamo l'utente loggato e lo associamo all'articolo
-        Authentication authentication = SecurityContexHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-            CustomUserDetails userDetails = (CustomUserDetail) authentication.getPrincipal();
+
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = (userRepository.findById(userDetails.getId())).get();
             article.setUser(user);
         }
@@ -84,58 +83,57 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         article.setIsAccepted(null);
 
         ArticleDto dto = modelMapper.map(articleRepository.save(article), ArticleDto.class);
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             imageService.saveImageOnDB(url, article);
         }
         return dto;
     }
-    
 
     @Override
     public ArticleDto update(Long key, Article updateArticle, MultipartFile file) {
-        //Implemento nella US5
+        // Implemento nella US5
         return null;
     }
 
     @Override
     public void delete(Long key) {
-        //Implementato nella US5
+        // Implemento nella US5
     }
 
-    //Ricerca per categoria
+    // Ricerca per categoria
     public List<ArticleDto> searchByCategory(it.aulab.progetto_finale_docente.models.Category category) {
         List<ArticleDto> dtos = new ArrayList<>();
-        for(Article article : articleRepository.findBYCategory(category)) {
+
+        for (Article article : articleRepository.findByCategory(category)) {
             dtos.add(modelMapper.map(article, ArticleDto.class));
         }
         return dtos;
     }
 
-    //Ricerca per autore
+    // Ricerca per autore
     public List<ArticleDto> searchByAuthor(User user) {
         List<ArticleDto> dtos = new ArrayList<>();
-        for(Article article : articleRepository.findByUser(user)) {
+        for (Article article : articleRepository.findByUser(user)) {
             dtos.add(modelMapper.map(article, ArticleDto.class));
         }
         return dtos;
     }
 
-    //Accetta o rifiuta articolo
-    public void setIsAccepted(Boolean resul, Long id) {
+    // Accetta o rifiuta articolo
+    // CORRETTO: resul -> result
+    public void setIsAccepted(Boolean result, Long id) {
         Article article = articleRepository.findById(id).get();
         article.setIsAccepted(result);
-        articleRepositotry.save(article);
+
+        articleRepository.save(article);
     }
 
-    //Ricerca full-text
+    // Ricerca full-text
     public List<ArticleDto> search(String keyword) {
         List<ArticleDto> dtos = new ArrayList<>();
-        for(Article article : articleRepository.search(keyword)) {
+        for (Article article : articleRepository.search(keyword)) {
             dtos.add(modelMapper.map(article, ArticleDto.class));
         }
         return dtos;
     }
-    
-        
-    
 }
