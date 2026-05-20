@@ -51,12 +51,12 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         if (optArticle.isPresent()) {
             return modelMapper.map(optArticle.get(), ArticleDto.class);
         } else {
-
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "Article id=" + key + " not found");
         }
     }
 
+    // NUOVO METODO METODO FASE 8 COMPLETO
     @Override
     public ArticleDto create(Article article, Principal principal, MultipartFile file) {
         String url = "";
@@ -64,12 +64,12 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         // Recuperiamo l'utente loggato e lo associamo all'articolo
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = (userRepository.findById(userDetails.getId())).get();
             article.setUser(user);
         }
-        // Gestione immagine
+        
+        // Gestione immagine (Salvataggio su Cloud asincrono)
         if (!file.isEmpty()) {
             try {
                 CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
@@ -79,10 +79,12 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
             }
         }
 
-        // Articolo va in revisione
+        // Articolo va in revisione di default
         article.setIsAccepted(null);
 
         ArticleDto dto = modelMapper.map(articleRepository.save(article), ArticleDto.class);
+        
+        // Se l'immagine è presente, colleghiamo l'URL dell'immagine all'articolo nel DB
         if (!file.isEmpty()) {
             imageService.saveImageOnDB(url, article);
         }
@@ -103,7 +105,6 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     // Ricerca per categoria
     public List<ArticleDto> searchByCategory(it.aulab.progetto_finale_docente.models.Category category) {
         List<ArticleDto> dtos = new ArrayList<>();
-
         for (Article article : articleRepository.findByCategory(category)) {
             dtos.add(modelMapper.map(article, ArticleDto.class));
         }
@@ -120,11 +121,9 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     }
 
     // Accetta o rifiuta articolo
-    // CORRETTO: resul -> result
     public void setIsAccepted(Boolean result, Long id) {
         Article article = articleRepository.findById(id).get();
         article.setIsAccepted(result);
-
         articleRepository.save(article);
     }
 

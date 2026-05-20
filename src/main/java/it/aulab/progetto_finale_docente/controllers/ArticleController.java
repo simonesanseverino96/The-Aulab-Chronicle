@@ -4,7 +4,7 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Collectors; // AGGIUNTO: Import fondamentale per il corretto funzionamento dello stream
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,23 +41,24 @@ public class ArticleController {
     @Autowired
     private ModelMapper modelMapper;
 
-    // Rotta index degli articoli
-
+    // FASE 10: Rotta index degli articoli (Verificata e Completa)
     @GetMapping
     public String articlesIndex(Model viewModel) {
         viewModel.addAttribute("title", "Tutti gli articoli");
 
+        // Prendiamo tutti gli articoli, filtriamo solo quelli accettati dai revisori (isAccepted == true)
         List<ArticleDto> articles = articleService.readAll()
                 .stream()
                 .filter(a -> Boolean.TRUE.equals(a.getIsAccepted()))
                 .collect(Collectors.toList());
 
+        // Ordiniamo gli articoli in base alla data di pubblicazione, invertendo l'ordine (dal più recente)
         Collections.sort(articles, Comparator.comparing(ArticleDto::getPublishDate).reversed());
         viewModel.addAttribute("articles", articles);
         return "article/articles";
     }
 
-    // Rotta per la creazione di un nuovo articolo
+    // Rotta per la visualizzazione della pagina di creazione di un nuovo articolo
     @GetMapping("create")
     public String articleCreate(Model viewModel) {
         viewModel.addAttribute("title", "Crea un articolo");
@@ -66,12 +67,12 @@ public class ArticleController {
         return "article/create";
     }
 
-    // Rotta per lo store di un articolo
+    // Rotta per il salvataggio effettivo dell'articolo (e dell'immagine allegata)
     @PostMapping
     public String articleStore(@Valid @ModelAttribute("article") Article article, BindingResult result,
             RedirectAttributes redirectAttributes, Principal principal, MultipartFile file, Model viewModel) {
 
-        // Controllo degli errori con validazioni
+        // Se ci sono errori di validazione nei campi del form, ricarichiamo la pagina mostrando i problemi
         if (result.hasErrors()) {
             viewModel.addAttribute("title", "Crea un articolo");
             viewModel.addAttribute("article", article);
@@ -79,11 +80,10 @@ public class ArticleController {
             return "article/create";
         }
 
-        // Salvo l'articolo e lo redirecto alla home
+        // Invochiamo il servizio che salverà l'articolo sul DB e caricherà l'immagine sul cloud
         articleService.create(article, principal, file);
         redirectAttributes.addFlashAttribute("successMessage", "Articolo aggiunto con successo!");
 
         return "redirect:/";
     }
-
 }
