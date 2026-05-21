@@ -14,7 +14,7 @@ import it.aulab.progetto_finale_docente.repositories.RoleRepository;
 import it.aulab.progetto_finale_docente.repositories.UserRepository;
 
 @Service
-public class CareerRequestServiceImpl {
+public class CareerRequestServiceImpl implements CareerRequestService {
 
     @Autowired
     private CareerRequestRepository careerRequestRepository;
@@ -30,7 +30,7 @@ public class CareerRequestServiceImpl {
 
     @Override
     @Transactional
-    public boolen isRoleAlreadyAssigned(User user, CareerRequest careerRequest) {
+    public boolean isRoleAlreadyAssigned(User user, CareerRequest careerRequest) {
         List<Long> allUserIds = careerRequestRepository.findAllUserIds();
 
         if (!allUserIds.contains(user.getId())) {
@@ -39,7 +39,7 @@ public class CareerRequestServiceImpl {
 
         List<Long> requests = careerRequestRepository.findByUserId(user.getId());
         return requests.stream()
-                .anyMatch(roleId -> roleId.equels(careerRequest.getRole().getId()));
+                .anyMatch(roleId -> roleId.equals(careerRequest.getRole().getId()));
     }
 
     @Override
@@ -65,9 +65,7 @@ public class CareerRequestServiceImpl {
         Role role = request.getRole();
 
         // Recupera tutti i ruoli già posseduti ed aggiunge quello nuovo
-        List<Role> newRoles = roleRepository.findByName(role.getName()) != null
-                ? user.getRoles()
-                : user.getRoles();
+        List<Role> newRoles = user.getRoles();
         newRoles.add(roleRepository.findByName(role.getName()));
 
         // Salva tutte le nuove modifiche
