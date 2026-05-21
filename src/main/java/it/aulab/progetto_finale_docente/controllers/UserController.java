@@ -1,5 +1,6 @@
 package it.aulab.progetto_finale_docente.controllers;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,7 +21,10 @@ import it.aulab.progetto_finale_docente.dtos.ArticleDto;
 import it.aulab.progetto_finale_docente.dtos.UserDto;
 import it.aulab.progetto_finale_docente.models.Article;
 import it.aulab.progetto_finale_docente.models.User;
+import it.aulab.progetto_finale_docente.repositories.ArticleRepository;
+import it.aulab.progetto_finale_docente.repositories.CareerRequestRepository;
 import it.aulab.progetto_finale_docente.services.ArticleService;
+import it.aulab.progetto_finale_docente.services.CategoryService;
 import it.aulab.progetto_finale_docente.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,6 +41,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ArticleRepository articleRepository;
 
     // Rotta di home
     @GetMapping("/")
@@ -117,5 +124,42 @@ public class UserController {
         viewModel.addAttribute("articles", acceptedArticles);
         return "article/articles";
 
+    }
+
+    @Autowired
+    private CareerRequestRepository careerRequestRepository;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    // Rotta per la dashboard dell'admin
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(Model viewModel) {
+        viewModel.addAttribute("title", "Richieste ricevute");
+        viewModel.addAttribute("requests",
+                careerRequestRepository.findByIsCheckedFalse());
+        viewModel.addAttribute("categories", categoryService.readAll());
+        return "admin/dashboard";
+    }
+
+    // Rotta per la dashboard del revisore
+    @GetMapping("/revisor/dashboard")
+    public String revisorDashboard(Model viewModel) {
+        viewModel.addAttribute("title", "Articoli da revisionare");
+        viewModel.addAttribute("articles",
+                articleRepository.findByIsAcceptedIsNull());
+        return "revisor/dashboard";
+    }
+
+    // Rotta per la dashboard del writer
+    @GetMapping("/writer/dashboard")
+    public String writerDashboard(Model viewModel, Principal principal) {
+        viewModel.addAttribute("title", "I tuoi articoli");
+        List<ArticleDto> userArticles = articleService.readAll()
+                .stream()
+                .filter(article -> article.getUser().getEmail().equals(principal.getName()))
+                .toList();
+        viewModel.addAttribute("articles", userArticles);
+        return "writer/dashboard";
     }
 }

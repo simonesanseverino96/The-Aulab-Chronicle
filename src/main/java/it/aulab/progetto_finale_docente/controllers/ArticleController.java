@@ -30,7 +30,7 @@ import it.aulab.progetto_finale_docente.services.CrudService;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/article")
+@RequestMapping("/articles")
 public class ArticleController {
 
     @Autowired
