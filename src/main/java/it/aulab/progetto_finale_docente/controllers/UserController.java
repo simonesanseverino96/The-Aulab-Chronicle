@@ -1,5 +1,7 @@
 package it.aulab.progetto_finale_docente.controllers;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,20 @@ public class UserController {
     // Rotta di home
     @GetMapping("/")
     public String home(Model viewModel) {
+        List<ArticleDto> articles = articleService.readAll()
+                .stream()
+                .filter(a -> Boolean.TRUE.equals(a.getIsAccepted()))
+                .collect(Collectors.toList());
+
+        // Ordina dal più recente
+        Collections.sort(articles, Comparator.comparing(ArticleDto::getPublishDate).reversed());
+
+        // Prendi solo i primi 3
+        List<ArticleDto> lastThreeArticles = articles.stream()
+                .limit(3)
+                .collect(Collectors.toList());
+
+        viewModel.addAttribute("articles", lastThreeArticles);
         return "home";
     }
 
@@ -93,7 +109,7 @@ public class UserController {
 
         List<ArticleDto> articles = articleService.searchByAuthor(user);
 
-        //Mostra solo articoli accettati
+        // Mostra solo articoli accettati
         List<ArticleDto> acceptedArticles = articles.stream()
                 .filter(article -> Boolean.TRUE.equals(article.getIsAccepted()))
                 .collect(Collectors.toList());
