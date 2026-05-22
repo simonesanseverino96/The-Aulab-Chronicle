@@ -1,0 +1,76 @@
+html<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{index :: head}"></head>
+<body>
+    <head th:insert="~{index :: navbar}"></head>
+
+    <div class="container-fluid p-3 bg-secondary-subtle text-center">
+        <div class="col-12">
+            <span class="h1">Dettaglio articolo</span>
+            <h1 th:text="${article.title}">Titolo</h1>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 d-flex flex-column">
+
+                <!-- Immagine -->
+                <div id="carouselExample" class="carousel slide">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img th:src="${article.image != null} ? ${article.image.path} : '/images/default.jpg'"
+                                 class="card-img-top" alt="...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <h2 th:text="${article.subtitle}">Sottotitolo</h2>
+                </div>
+
+                <!-- Categoria -->
+                <p class="fs-5" th:if="${article.category != null}">
+                    Categoria:
+                    <span class="fw-bold" th:text="${article.category.name}">categoria</span>
+                </p>
+
+                <!-- Corpo -->
+                <div>
+                    <p th:text="${article.body}">corpo</p>
+                </div>
+
+                <!-- Torna indietro -->
+                <div class="text-center">
+                    <a href="#" class="text-secondary" onclick="goBack()">Torna indietro</a>
+                </div>
+
+                <!-- Bottoni accetta/rifiuta -->
+                <div class="d-flex justify-content-between mt-4">
+                    <form th:action="@{/articles/accept}" method="post">
+                        <input type="hidden" name="action" value="accept">
+                        <input type="hidden" name="articleId" th:value="${article.id}">
+                        <button type="submit" class="btn btn-success m-2">Accetta</button>
+                    </form>
+
+                    <form th:action="@{/articles/accept}" method="post"
+                          th:object="${article}">
+                        <input type="hidden" name="action" value="reject">
+                        <input type="hidden" name="articleId" th:value="${article.id}">
+                        <button type="submit" class="btn btn-danger m-2">Rifiuta</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <head th:insert="~{index :: footer}"></head>
+    <script th:replace="~{index :: bootstrapScript}"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>
