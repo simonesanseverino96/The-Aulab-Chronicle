@@ -90,6 +90,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
         return dto;
     }
+
     @Override
     public ArticleDto update(Long key, Article updatedArticle, MultipartFile file) {
         String url = "";
@@ -140,16 +141,17 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         if (articleRepository.existsById(key)) {
             Article article = articleRepository.findById(key).get();
             try {
-                // Eliminiamo l'immagine dallo storage se esiste
                 if (article.getImage() != null) {
                     String path = article.getImage().getPath();
-                    article.getImage().setArticle(null);
-                    article.setImage(null);
+                    // Prima eliminiamo l'immagine dal DB
                     imageService.deleteImage(path);
+                    // Aspettiamo un po' per l'operazione asincrona
+                    Thread.sleep(500);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            // Poi eliminiamo l'articolo
             articleRepository.deleteById(key);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
