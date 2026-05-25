@@ -1,5 +1,6 @@
 package it.aulab.progetto_finale_docente.controllers;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,6 @@ import it.aulab.progetto_finale_docente.repositories.RoleRepository;
 import it.aulab.progetto_finale_docente.repositories.UserRepository;
 import it.aulab.progetto_finale_docente.services.CareerRequestService;
 
-
-
 @Controller
 @RequestMapping("/operations")
 public class OperationController {
@@ -30,7 +29,7 @@ public class OperationController {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private CareerRequestService careerRequestService;
 
@@ -45,7 +44,27 @@ public class OperationController {
 
         return "career/requestForm";
     }
-    
+
+    // Rotta per il salvataggio di una richiesta di ruolo
+    @PostMapping("/career/request/save")
+    public String careerRequestStore(@ModelAttribute("careerRequest") CareerRequest careerRequest,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+
+        User user = userRepository.findByEmail(principal.getName());
+
+        if (careerRequestService.isRoleAlreadyAssigned(user, careerRequest)) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Hai già assegnato a questo ruolo");
+            return "redirect:/";
+        }
+
+        careerRequestService.save(careerRequest, user);
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Richiesta inviata con successo");
+        return "redirect:/";
+    }
+
     @GetMapping("/career/request/detail/{id}")
     public String careerRequestDetail(@PathVariable Long id, Model viewModel) {
         viewModel.addAttribute("title", "Dettaglio richiesta");
@@ -55,14 +74,10 @@ public class OperationController {
 
     @PostMapping("/career/request/accept/{id}")
     public String careerRequestAccept(@PathVariable Long id,
-                                       RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         careerRequestService.careerAccept(id);
         redirectAttributes.addFlashAttribute("successMessage",
-            "Ruolo abilitato per l'utente");
+                "Ruolo abilitato per l'utente");
         return "redirect:/admin/dashboard";
     }
 }
-    
-
-
-
