@@ -57,7 +57,11 @@ public class ArticleController {
 
         // Ordiniamo gli articoli in base alla data di pubblicazione, invertendo
         // l'ordine (dal più recente)
-        Collections.sort(articles, Comparator.comparing(ArticleDto::getPublishDate).reversed());
+        Collections.sort(articles, Comparator.comparing(
+                ArticleDto::getPublishDate,
+                Comparator.nullsLast(Comparator.reverseOrder())));
+
+        // Prendiamo solo i primi 3 articoli
         viewModel.addAttribute("articles", articles);
         return "article/articles";
     }

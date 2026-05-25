@@ -54,7 +54,9 @@ public class UserController {
                 .collect(Collectors.toList());
 
         // Ordina dal più recente
-        Collections.sort(articles, Comparator.comparing(ArticleDto::getPublishDate).reversed());
+        Collections.sort(articles, Comparator.comparing(
+                ArticleDto::getPublishDate,
+                Comparator.nullsLast(Comparator.reverseOrder())));
 
         // Prendi solo i primi 3
         List<ArticleDto> lastThreeArticles = articles.stream()
