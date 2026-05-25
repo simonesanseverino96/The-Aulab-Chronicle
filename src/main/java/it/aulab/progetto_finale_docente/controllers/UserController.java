@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import it.aulab.progetto_finale_docente.dtos.ArticleDto;
 import it.aulab.progetto_finale_docente.dtos.UserDto;
-import it.aulab.progetto_finale_docente.models.Article;
 import it.aulab.progetto_finale_docente.models.User;
 import it.aulab.progetto_finale_docente.repositories.ArticleRepository;
 import it.aulab.progetto_finale_docente.repositories.CareerRequestRepository;
@@ -35,9 +33,6 @@ public class UserController {
 
     @Autowired
     private ArticleService articleService;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Autowired
     private UserService userService;
