@@ -90,11 +90,49 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
         return dto;
     }
-
     @Override
-    public ArticleDto update(Long key, Article updateArticle, MultipartFile file) {
-        // Implemento nella US5
-        return null;
+    public ArticleDto update(Long key, Article updatedArticle, MultipartFile file) {
+        String url = "";
+        if (articleRepository.existsById(key)) {
+            updatedArticle.setId(key);
+            Article article = articleRepository.findById(key).get();
+
+            // Impostiamo l'utente dell'articolo originale
+            updatedArticle.setUser(article.getUser());
+
+            if (!file.isEmpty()) {
+                try {
+                    // Eliminiamo la vecchia immagine se esiste
+                    if (article.getImage() != null) {
+                        imageService.deleteImage(article.getImage().getPath());
+                    }
+                    // Salviamo la nuova immagine
+                    CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
+                    url = futureUrl.get();
+                    imageService.saveImageOnDB(url, updatedArticle);
+                    // L'articolo torna in revisione
+                    updatedArticle.setIsAccepted(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (article.getImage() == null) {
+                // Nessuna immagine né prima né dopo
+                updatedArticle.setIsAccepted(article.getIsAccepted());
+            } else {
+                // Immagine non modificata
+                updatedArticle.setImage(article.getImage());
+                if (!updatedArticle.equals(article)) {
+                    // Articolo modificato, torna in revisione
+                    updatedArticle.setIsAccepted(null);
+                } else {
+                    // Articolo non modificato
+                    updatedArticle.setIsAccepted(article.getIsAccepted());
+                }
+            }
+            return modelMapper.map(articleRepository.save(updatedArticle), ArticleDto.class);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Override
