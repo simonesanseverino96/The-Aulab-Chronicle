@@ -1,4 +1,4 @@
-package it.aulab.progetto_finale_docente.models; // <-- ADATTA QUESTO AL TUO REALE PACKAGE
+package it.aulab.progetto_finale_docente.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +28,7 @@ public class Image {
     @Column(nullable = false, length = 255)
     private String path;
 
-    @OneToOne 
-    @JoinColumn(name = "article_id")
+    @OneToOne
+    @JoinColumn(name = "article_id", unique = true)
     private Article article;
 }
