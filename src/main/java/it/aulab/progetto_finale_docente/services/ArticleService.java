@@ -68,7 +68,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
             User user = (userRepository.findById(userDetails.getId())).get();
             article.setUser(user);
         }
-        
+
         // Gestione immagine (Salvataggio su Cloud asincrono)
         if (!file.isEmpty()) {
             try {
@@ -83,7 +83,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         article.setIsAccepted(null);
 
         ArticleDto dto = modelMapper.map(articleRepository.save(article), ArticleDto.class);
-        
+
         // Se l'immagine è presente, colleghiamo l'URL dell'immagine all'articolo nel DB
         if (!file.isEmpty()) {
             imageService.saveImageOnDB(url, article);
@@ -99,7 +99,23 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
 
     @Override
     public void delete(Long key) {
-        // Implemento nella US5
+        if (articleRepository.existsById(key)) {
+            Article article = articleRepository.findById(key).get();
+            try {
+                // Eliminiamo l'immagine dallo storage se esiste
+                if (article.getImage() != null) {
+                    String path = article.getImage().getPath();
+                    article.getImage().setArticle(null);
+                    article.setImage(null);
+                    imageService.deleteImage(path);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            articleRepository.deleteById(key);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
     // Ricerca per categoria
