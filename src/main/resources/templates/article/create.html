@@ -4,28 +4,23 @@
   <body>
     <head th:insert="~{index :: navbar}"></head>
 
-    <div class="vh-100">
+    <div class="min-vh-100 pb-5">
       <div class="container">
         <div class="row">
-          <div
-            class="col-12 my-5 d-flex justify-content-between align-items-center flex-grow-1"
-          >
-            <div
-              class="d-flex justify-content-center align-items-center flex-grow-1"
-            >
+          <div class="col-12 my-5 d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-center align-items-center flex-grow-1">
               <h3 th:text="${title}">Inserisci un articolo</h3>
             </div>
           </div>
         </div>
 
-        <div class="col-12 my-5">
-          <form
-            th:action="@{/articles}"
-            method="POST"
-            th:object="${article}"
-            enctype="multipart/form-data"
-          >
-            <div class="col">
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-8"> <form
+              th:action="@{/articles}"
+              method="POST"
+              th:object="${article}"
+              enctype="multipart/form-data"
+            >
               <div class="form-group mb-3">
                 <label for="articleTitle" class="form-label">Titolo</label>
                 <input
@@ -43,9 +38,7 @@
               </div>
 
               <div class="form-group mb-3">
-                <label for="articleSubtitle" class="form-label"
-                  >Sottotitolo</label
-                >
+                <label for="articleSubtitle" class="form-label">Sottotitolo</label>
                 <input
                   id="articleSubtitle"
                   type="text"
@@ -62,13 +55,13 @@
 
               <div class="form-group mb-3">
                 <label for="body" class="form-label">Articolo</label>
-                <input
+                <textarea
                   id="body"
-                  type="text"
                   class="form-control"
                   th:field="*{body}"
+                  rows="6"
                   placeholder="Inserisci un testo..."
-                />
+                ></textarea>
                 <p
                   th:errors="*{body}"
                   class="text-danger"
@@ -77,15 +70,12 @@
               </div>
 
               <div class="form-group mb-3">
-                <label for="date" class="form-label"
-                  >Publish date (8 chars)</label
-                >
+                <label for="date" class="form-label">Publish date</label>
                 <input
                   id="date"
                   type="date"
                   class="form-control"
                   th:field="*{publishDate}"
-                  placeholder="yyyy/MM/dd"
                 />
                 <p
                   th:errors="*{publishDate}"
@@ -114,8 +104,7 @@
                 ></p>
               </div>
 
-              <div class="form-group mb-3">
-                <label for="image" class="form-label">Immagine</label>
+              <div class="form-group mb-4"> <label for="image" class="form-label">Immagine</label>
                 <input
                   type="file"
                   name="file"
@@ -124,11 +113,12 @@
                 />
               </div>
 
-              <button type="submit" class="btn btn-success">
-                Crea articolo
-              </button>
-            </div>
-          </form>
+              <div class="mb-5"> <button type="submit" class="btn btn-success w-100">
+                  Crea articolo
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
