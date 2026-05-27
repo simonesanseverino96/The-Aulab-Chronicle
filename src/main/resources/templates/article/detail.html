@@ -4,87 +4,72 @@
   <body>
     <head th:insert="~{index :: navbar}"></head>
 
-    <div class="container-fluid p-5 bg-secondary-subtle text-center">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8">
-          <span class="text-uppercase text-muted small fw-bold">Dettaglio Articolo</span>
-          <h1 class="display-4 mt-2" th:text="${article.title}">Titolo</h1>
+    <!-- Header articolo -->
+    <div class="article-detail-header">
+      <div class="container">
+        <span
+          class="badge bg-primary mb-3"
+          th:if="${article.category != null}"
+          th:text="${article.category.name}"
+        >
+        </span>
+        <h1 class="display-4 fw-bold" th:text="${article.title}">Titolo</h1>
+        <p class="lead fst-italic mt-2" th:text="${article.subtitle}">
+          Sottotitolo
+        </p>
+        <div class="d-flex justify-content-center gap-4 mt-3">
+          <span>
+            <i class="fa-solid fa-user me-1"></i>
+            <a
+              th:href="@{/search/{id}(id=${article.user.id})}"
+              class="text-white fw-bold text-decoration-none"
+              th:text="${article.user.username}"
+              >Autore</a
+            >
+          </span>
+          <span th:if="${article.publishDate != null}">
+            <i class="fa-solid fa-calendar me-1"></i>
+            <span th:text="${article.publishDate}">Data</span>
+          </span>
+          <span th:if="${article.category != null}">
+            <i class="fa-solid fa-tag me-1"></i>
+            <a
+              th:href="@{/categories/search/{id}(id=${article.category.id})}"
+              class="text-white text-decoration-none"
+              th:text="${article.category.name}"
+              >Categoria</a
+            >
+          </span>
         </div>
       </div>
     </div>
 
-    <div class="container my-5 min-vh-100 pb-5">
+    <div class="container my-5 pb-5">
       <div class="row justify-content-center">
         <div class="col-12 col-md-8">
-          
-          <div id="carouselExample" class="carousel slide mb-4 shadow-sm rounded overflow-hidden">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img
-                  th:src="${article.image != null} ? ${article.image.path} : '/images/default.jpg'"
-                  class="d-block w-100 img-fluid"
-                  alt="Immagine articolo"
-                  style="max-height: 450px; object-fit: cover;"
-                />
-              </div>
-            </div>
-            <button
-              class="carousel-control-prev"
-              type="button"
-              data-bs-target="#carouselExample"
-              data-bs-slide="prev"
-            >
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button
-              class="carousel-control-next"
-              type="button"
-              data-bs-target="#carouselExample"
-              data-bs-slide="next"
-            >
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
+          <!-- Immagine -->
+          <div class="mb-5 rounded overflow-hidden shadow">
+            <img
+              th:src="${article.image != null} ? ${article.image.path} : '/images/default.jpg'"
+              class="w-100"
+              alt="Immagine articolo"
+              style="max-height: 500px; object-fit: cover"
+            />
           </div>
 
-          <div class="text-center mb-4">
-            <h3 class="text-muted fst-italic" th:text="${article.subtitle}">Sottotitolo</h3>
-          </div>
-
-          <hr>
-
-          <div class="d-flex flex-wrap justify-content-between align-items-center text-muted my-3 small">
-            <div>
-              <span>Scritto da: </span>
-              <a th:href="@{/search/{id}(id=${article.user.id})}" class="fw-bold text-decoration-none" th:text="${article.user.username}">Utente</a>
-              
-              <span th:if="${article.publishDate != null}" class="ms-2">
-                il <span th:text="${article.publishDate}">data</span>
-              </span>
-            </div>
-
-            <div>
-              <span th:if="${article.category != null}">
-                Categoria: 
-                <a th:href="@{/categories/search/{id}(id=${article.category.id})}" class="badge bg-secondary text-capitalize text-decoration-none" th:text="${article.category.name}">categoria</a>
-              </span>
-              <span th:if="${article.category == null}" class="text-muted fst-italic">Nessuna categoria</span>
-            </div>
-          </div>
-
-          <hr class="mb-4">
-
-          <div class="article-body fs-5 lh-lg mb-5 text-justify" style="white-space: pre-line;">
+          <!-- Corpo articolo -->
+          <div class="article-detail-body mb-5" style="white-space: pre-line">
             <p th:text="${article.body}">corpo dell'articolo...</p>
           </div>
 
-          <div class="text-center my-5">
-            <button class="btn btn-outline-secondary" onclick="goBack()">
-              <i class="bi bi-arrow-left"></i> Torna indietro
+          <hr />
+
+          <!-- Torna indietro -->
+          <div class="text-center mt-4">
+            <button class="btn btn-outline-secondary btn-lg" onclick="goBack()">
+              <i class="fa-solid fa-arrow-left me-2"></i>Torna indietro
             </button>
           </div>
-
         </div>
       </div>
     </div>
@@ -92,7 +77,6 @@
     <head th:insert="~{index :: footer}"></head>
     <script th:replace="~{index :: bootstrapScript}"></script>
     <script>
-      // Funzione JavaScript nativa per tornare alla pagina precedente
       function goBack() {
         window.history.back();
       }
