@@ -4,64 +4,77 @@
   <body>
     <head th:insert="~{index :: navbar}"></head>
 
-    <div class="vh-100">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 offset-md-3">
-            <div class="card">
-              <div class="card-header">
-                <h2 class="text-center">Login Form</h2>
-              </div>
-
-              <div th:if="${param.error}">
-                <div class="alert alert-danger">Invalid Email or Password</div>
-              </div>
-
-              <div th:if="${param.logout}">
-                <div class="alert alert-success">You have been logged out.</div>
-              </div>
-
-              <div class="card-body">
-                <form
-                  method="post"
-                  role="form"
-                  th:action="@{/login}"
-                  class="form-horizontal"
-                >
-                  <div class="form-group mb-3">
-                    <label class="control-label">Email</label>
-                    <input
-                      type="text"
-                      id="username"
-                      name="username"
-                      class="form-control"
-                      placeholder="Enter email address"
-                    />
-                  </div>
-
-                  <div class="form-group mb-3">
-                    <label class="control-label">Password</label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      class="form-control"
-                      placeholder="Enter password"
-                    />
-                  </div>
-
-                  <div class="form-group mb-3">
-                    <button type="submit" class="btn btn-primary">
-                      Submit
-                    </button>
-                    <span
-                      >Not registered?
-                      <a th:href="@{/register}">Register/Signup here</a>
-                    </span>
-                  </div>
-                </form>
-              </div>
+    <div class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-5">
+          <!-- Card form -->
+          <div class="form-card">
+            <!-- Titolo -->
+            <div class="text-center mb-4">
+              <i
+                class="fa-solid fa-right-to-bracket fa-3x text-primary mb-3"
+              ></i>
+              <h2 class="fw-bold">Accedi</h2>
+              <p class="text-muted">Benvenuto! Inserisci le tue credenziali</p>
             </div>
+
+            <!-- Alert errore -->
+            <div th:if="${param.error}" class="alert alert-danger">
+              <i class="fa-solid fa-triangle-exclamation me-2"></i>
+              Email o password non validi!
+            </div>
+
+            <!-- Alert logout -->
+            <div th:if="${param.logout}" class="alert alert-success">
+              <i class="fa-solid fa-circle-check me-2"></i>
+              Hai effettuato il logout con successo!
+            </div>
+
+            <form
+              method="post"
+              role="form"
+              th:action="@{/login}"
+              class="form-horizontal"
+            >
+              <div class="mb-3">
+                <label class="form-label fw-semibold">
+                  <i class="fa-solid fa-envelope me-1"></i>Email
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  class="form-control"
+                  placeholder="Inserisci la tua email"
+                />
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fw-semibold">
+                  <i class="fa-solid fa-lock me-1"></i>Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  class="form-control"
+                  placeholder="Inserisci la password"
+                />
+              </div>
+
+              <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="fa-solid fa-right-to-bracket me-2"></i>Accedi
+                </button>
+              </div>
+
+              <div class="text-center text-muted">
+                Non sei registrato?
+                <a th:href="@{/register}" class="text-primary fw-semibold">
+                  Registrati qui
+                </a>
+              </div>
+            </form>
           </div>
         </div>
       </div>
