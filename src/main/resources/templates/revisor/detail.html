@@ -1,67 +1,91 @@
-html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head th:insert="~{index :: head}"></head>
+
 <body>
+
     <head th:insert="~{index :: navbar}"></head>
 
-    <div class="container-fluid p-3 bg-secondary-subtle text-center">
-        <div class="col-12">
-            <span class="h1">Dettaglio articolo</span>
-            <h1 th:text="${article.title}">Titolo</h1>
+    <div class="container mt-4" th:if="${successMessage}">
+        <div class="alert alert-success shadow-sm" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            <span th:text="${successMessage}">Messaggio di successo</span>
         </div>
     </div>
 
-    <div class="container my-5">
+    <div class="container my-5 min-vh-100 pb-5">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-8 d-flex flex-column">
 
-                <!-- Immagine -->
-                <div id="carouselExample" class="carousel slide">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img th:src="${article.image != null} ? ${article.image.path} : '/images/default.jpg'"
-                                 class="card-img-top" alt="...">
-                        </div>
-                    </div>
+            <div class="col-12 mb-5">
+                <div class="dashboard-header shadow">
+                    <h1 class="display-4 fw-bold mb-2" th:text="${article.title}">Titolo dell'articolo</h1>
+                    <p class="lead mb-0">Stai visionando l'articolo in attesa di approvazione o rifiuto finale</p>
                 </div>
-
-                <div class="text-center">
-                    <h2 th:text="${article.subtitle}">Sottotitolo</h2>
-                </div>
-
-                <!-- Categoria -->
-                <p class="fs-5" th:if="${article.category != null}">
-                    Categoria:
-                    <span class="fw-bold" th:text="${article.category.name}">categoria</span>
-                </p>
-
-                <!-- Corpo -->
-                <div>
-                    <p th:text="${article.body}">corpo</p>
-                </div>
-
-                <!-- Torna indietro -->
-                <div class="text-center">
-                    <a href="#" class="text-secondary" onclick="goBack()">Torna indietro</a>
-                </div>
-
-                <!-- Bottoni accetta/rifiuta -->
-                <div class="d-flex justify-content-between mt-4">
-                    <form th:action="@{/articles/accept}" method="post">
-                        <input type="hidden" name="action" value="accept">
-                        <input type="hidden" name="articleId" th:value="${article.id}">
-                        <button type="submit" class="btn btn-success m-2">Accetta</button>
-                    </form>
-
-                    <form th:action="@{/articles/accept}" method="post"
-                          th:object="${article}">
-                        <input type="hidden" name="action" value="reject">
-                        <input type="hidden" name="articleId" th:value="${article.id}">
-                        <button type="submit" class="btn btn-danger m-2">Rifiuta</button>
-                    </form>
-                </div>
-
             </div>
+
+            <div class="col-12 col-lg-10">
+                <div class="card border-0 shadow-sm p-4 p-md-5 rounded-4 bg-white mb-5">
+
+                    <div class="position-relative overflow-hidden rounded-4 mb-4 shadow-sm" style="max-height: 450px;">
+                        <img th:src="${article.image != null} ? ${article.image.path} : '/images/default.jpg'"
+                            class="w-100 h-100" alt="Immagine di copertina"
+                            style="object-fit: cover; max-height: 450px;">
+
+                        <span th:if="${article.category != null}"
+                            class="position-absolute bottom-0 start-0 m-4 badge text-uppercase px-3 py-2 fw-semibold shadow bg-dark text-white rounded-3"
+                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            <i class="fa-solid fa-bookmark text-info me-1"></i>
+                            <span th:text="${article.category.name}">Categoria</span>
+                        </span>
+                    </div>
+
+                    <div class="mb-4 pb-3 border-bottom border-light">
+                        <h3 class="fw-normal text-secondary lh-base" th:text="${article.subtitle}"
+                            style="font-style: italic; font-size: 1.35rem;">
+                            Sottotitolo dell'articolo
+                        </h3>
+                    </div>
+
+                    <div class="article-body-text text-dark lh-lg fs-5 mb-5"
+                        style="white-space: pre-line; text-align: justify;">
+                        <p class="mb-0" th:text="${article.body}">Corpo del testo...</p>
+                    </div>
+
+                    <div
+                        class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 pt-4 border-top border-light">
+
+                        <a href="#"
+                            class="btn btn-link text-decoration-none text-muted fw-medium d-flex align-items-center gap-2"
+                            onclick="goBack()">
+                            <i class="fa-solid fa-arrow-left-long"></i> Torna alla Dashboard
+                        </a>
+
+                        <div class="d-flex gap-2 w-100 w-md-auto justify-content-end">
+                            <form th:action="@{/articles/accept}" method="post" th:object="${article}" class="m-0">
+                                <input type="hidden" name="action" value="reject">
+                                <input type="hidden" name="articleId" th:value="${article.id}">
+                                <button type="submit"
+                                    class="btn btn-outline-danger rounded-pill px-4 py-2 d-flex align-items-center gap-2 fw-medium">
+                                    <i class="fa-solid fa-circle-xmark"></i> Rifiuta Bozza
+                                </button>
+                            </form>
+
+                            <form th:action="@{/articles/accept}" method="post" class="m-0">
+                                <input type="hidden" name="action" value="accept">
+                                <input type="hidden" name="articleId" th:value="${article.id}">
+                                <button type="submit"
+                                    class="btn btn-success rounded-pill px-4 py-2 d-flex align-items-center gap-2 fw-medium shadow-sm">
+                                    <i class="fa-solid fa-circle-check"></i> Accetta e Pubblica
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -73,4 +97,5 @@ html<!DOCTYPE html>
         }
     </script>
 </body>
+
 </html>

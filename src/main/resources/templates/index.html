@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
-<!-- Fragment head -->
 
 <head th:fragment="head">
   <meta charset="utf-8" />
@@ -14,78 +13,68 @@
   <title th:text="${title}">Title</title>
 </head>
 
-<!-- Inizio navbar -->
-
 <body>
-  <nav th:fragment="navbar" class="navbar navbar-expand-lg py-3 mb-4 shadow-sm"
-    style="background-color: var(--dark-bg); border-bottom: 1px solid rgba(255,255,255,0.05);">
+  <nav th:fragment="navbar" class="navbar navbar-expand-lg py-3 shadow-sm custom-navbar">
     <div class="container-fluid">
 
-      <a class="navbar-brand text-uppercase fw-bold tracking-wider text-white" th:href="@{/}"
-        style="font-size: 1.3rem; letter-spacing: 1px; transition: color 0.3s ease;">
-        <i class="fa-solid fa-feather-pointed me-2" style="color: var(--secondary-color);"></i>Aulab <span
-          style="color: var(--accent-color);">Chronicle</span>
+      <a class="navbar-brand text-uppercase fw-bold tracking-wider text-white custom-brand" th:href="@{/}">
+        <i class="fa-solid fa-feather-pointed me-2 custom-brand-icon"></i>Aulab <span
+          class="custom-brand-accent">Chronicle</span>
       </a>
 
       <button class="navbar-toggler border-0 shadow-none text-white" type="button" data-bs-toggle="collapse"
         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
         aria-label="Toggle navigation">
-        <i class="fa-solid fa-bars-staggered" style="font-size: 1.4rem;"></i>
+        <i class="fa-solid fa-bars-staggered custom-toggler-icon"></i>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center gap-2">
           <li class="nav-item">
-            <a class="nav-link text-white-50 px-3 py-2 rounded-3 text-decoration-none fw-medium" th:href="@{/articles}"
-              style="transition: all 0.3s ease;"
-              onmouseover="this.style.color='var(--secondary-color)'; this.style.backgroundColor='rgba(255,255,255,0.03)'"
-              onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.backgroundColor='transparent'">
+            <a class="nav-link text-white-50 px-3 py-2 rounded-3 text-decoration-none fw-medium custom-nav-link"
+              th:href="@{/articles}">
               <i class="fa-regular fa-newspaper me-1 small"></i> Tutti gli articoli
             </a>
           </li>
 
           <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
-            <a class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium d-inline-flex align-items-center gap-2"
-              th:href="@{/admin/dashboard}" style="transition: all 0.3s ease;"
-              onmouseover="this.style.color='var(--secondary-color)'; this.style.backgroundColor='rgba(255,255,255,0.03)'"
-              onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.backgroundColor='transparent'">
+            <a class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium d-inline-flex align-items-center gap-2 custom-nav-link"
+              th:href="@{/admin/dashboard}">
               <span>Dashboard Admin</span>
               <span th:if="${careerRequests != null AND careerRequests > 0}" class="position-relative d-inline-block">
-                <i class="fas fa-bell text-warning animate-bounce" style="font-size: 0.9rem;"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                  style="font-size: 0.55rem; padding: 0.25em 0.4em;" th:text="${careerRequests}"></span>
+                <i class="fas fa-bell text-warning animate-bounce custom-bell-icon"></i>
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger custom-notification-badge"
+                  th:text="${careerRequests}"></span>
               </span>
             </a>
           </li>
 
           <li class="nav-item" sec:authorize="hasRole('ROLE_REVISOR')">
-            <a class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium d-inline-flex align-items-center gap-2"
-              th:href="@{/revisor/dashboard}" style="transition: all 0.3s ease;"
-              onmouseover="this.style.color='var(--secondary-color)'; this.style.backgroundColor='rgba(255,255,255,0.03)'"
-              onmouseout="this.style.color='rgba(255,255,255,0.7)'; this.style.backgroundColor='transparent'">
+            <a class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium d-inline-flex align-items-center gap-2 custom-nav-link"
+              th:href="@{/revisor/dashboard}">
               <span>Dashboard Revisor</span>
               <span th:if="${articlesToBeRevised != null AND articlesToBeRevised > 0}"
                 class="position-relative d-inline-block">
-                <i class="fas fa-bell text-warning" style="font-size: 0.9rem;"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                  style="font-size: 0.55rem; padding: 0.25em 0.4em;" th:text="${articlesToBeRevised}"></span>
+                <i class="fas fa-bell text-warning custom-bell-icon"></i>
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger custom-notification-badge"
+                  th:text="${articlesToBeRevised}"></span>
               </span>
             </a>
           </li>
 
           <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_WRITER')">
-            <a class="nav-link dropdown-toggle text-white-50 px-3 py-2 rounded-3 fw-medium" href="#" id="writerDropdown"
-              role="button" data-bs-toggle="dropdown" aria-expanded="false" style="transition: all 0.3s ease;"
-              onmouseover="this.style.color='var(--secondary-color)';"
-              onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <a class="nav-link dropdown-toggle text-white-50 px-3 py-2 rounded-3 fw-medium custom-dropdown-toggle"
+              href="#" id="writerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa-solid fa-pen-fancy me-1 small"></i> Area Writer
             </a>
-            <ul class="dropdown-menu dropdown-menu-dark border-0 shadow-lg p-2" aria-labelledby="writerDropdown"
-              style="background-color: #1e2b37; border-radius: var(--border-radius);">
+            <ul class="dropdown-menu dropdown-menu-dark border-0 shadow-lg p-2 custom-dropdown-menu"
+              aria-labelledby="writerDropdown">
               <li>
                 <a class="dropdown-item rounded-2 py-2" th:href="@{/writer/dashboard}">
-                  <i class="fa-solid fa-chart-pie me-2 small text-muted"></i>La tua Dashboard
+                  <i class="fa-solid fa-chart-pie me-2 small custom-menu-icon"></i>La tua Dashboard
                 </a>
               </li>
               <li>
@@ -93,8 +82,7 @@
               </li>
               <li>
                 <a class="dropdown-item rounded-2 py-2" th:href="@{/articles/create}">
-                  <i class="fa-solid fa-circle-plus me-2 small" style="color: var(--accent-color);"></i>Scrivi un
-                  Articolo
+                  <i class="fa-solid fa-circle-plus me-2 small custom-menu-icon"></i>Scrivi un Articolo
                 </a>
               </li>
             </ul>
@@ -104,14 +92,10 @@
         <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3 ms-auto mt-3 mt-lg-0">
 
           <form class="d-flex" th:action="@{/articles/search}" method="get">
-            <div class="input-group" style="max-width: 240px;">
-              <input class="form-control form-control-sm border-0 text-white px-3" type="search"
-                placeholder="Cerca articoli..." name="keyword" aria-label="Search"
-                style="background-color: rgba(255,255,255,0.08); border-radius: 20px 0 0 20px; font-size: 0.85rem;" />
-              <button class="btn btn-sm border-0 text-white-50 px-3" type="submit"
-                style="background-color: rgba(255,255,255,0.12); border-radius: 0 20px 20px 0;"
-                onmouseover="this.style.color='white'; this.style.backgroundColor='var(--accent-color)'"
-                onmouseout="this.style.color='rgba(255,255,255,0.5)'; this.style.backgroundColor='rgba(255,255,255,0.12)'">
+            <div class="input-group custom-search-group">
+              <input class="form-control form-control-sm border-0 text-white px-3 custom-search-input" type="search"
+                placeholder="Cerca articoli..." name="keyword" aria-label="Search" />
+              <button class="btn btn-sm border-0 text-white-50 px-3 custom-search-btn" type="submit">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </button>
             </div>
@@ -121,11 +105,10 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle text-white fw-medium d-flex align-items-center gap-1 px-2" href="#"
                 id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-regular fa-circle-user style='font-size: 1.1rem;'"></i> Account
+                <i class="fa-regular fa-circle-user custom-user-icon"></i> Account
               </a>
-              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark border-0 shadow-lg p-2"
-                aria-labelledby="profileDropdown"
-                style="background-color: #1e2b37; border-radius: var(--border-radius);">
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark border-0 shadow-lg p-2 custom-dropdown-menu"
+                aria-labelledby="profileDropdown">
                 <li sec:authorize="isAnonymous()">
                   <a class="dropdown-item rounded-2 py-2" th:href="@{/register}"><i
                       class="fa-solid fa-user-plus me-2 text-muted small"></i>Registrati</a>
@@ -143,13 +126,12 @@
           </ul>
 
           <div sec:authorize="isAuthenticated()"
-            class="navbar-text text-white d-flex align-items-center gap-2 px-3 py-1.5 shadow-inner"
-            style="background-color: rgba(0, 0, 0, 0.2); border-radius: 30px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.05);">
-            <span class="fw-semibold text-white-50"><i class="fa-solid fa-circle text-success me-1"
-                style="font-size: 0.5rem;"></i><span
-                th:text="${#authentication.principal.fullname}">Utente</span></span>
-            <span class="badge text-uppercase tracking-wide"
-              style="font-size: 0.6rem; padding: 4px 8px; background-color: var(--accent-color); color: white; border-radius: 10px;"
+            class="navbar-text text-white d-flex align-items-center gap-2 px-3 py-1.5 custom-user-badge">
+            <span class="fw-semibold text-white-50">
+              <i class="fa-solid fa-circle text-success me-1 custom-live-dot"></i>
+              <span th:text="${#authentication.principal.fullname}">Utente</span>
+            </span>
+            <span class="badge text-uppercase tracking-wide custom-role-badge"
               th:text="${#authentication.principal.authorities[0].authority.replace('ROLE_', '')}">Ruolo</span>
           </div>
 
@@ -157,35 +139,42 @@
       </div>
     </div>
   </nav>
-  <!-- fine navbar -->
 
-  <!-- Footer -->
-  <footer th:fragment="footer" class="bg-dark text-white pt-4">
+  <footer th:fragment="footer" class="text-white pt-5 mt-auto custom-footer">
     <div class="container">
-      <div class="row justify-content-between">
-        <!-- Company info -->
-        <div class="col-md-4 mb-3">
-          <a href="/">
-            <h5>Aulab</h5>
+      <div class="row justify-content-between align-items-center mb-4">
+
+        <div class="col-md-4 mb-3 mb-md-0">
+          <a th:href="@{//}" class="text-decoration-none text-white fs-4 fw-bold tracking-wider custom-footer-brand">
+            <i class="fa-solid fa-feather-pointed me-2 custom-brand-icon"></i>Aulab <span
+              class="custom-brand-accent-footer">Chronicle</span>
+          </a>
+          <p class="text-white-50 small mt-2 mb-0">Il portale delle notizie e degli approfondimenti firmato Aulab.</p>
+        </div>
+
+        <div class="col-md-4 text-md-end">
+          <h5 class="fw-semibold mb-2 custom-footer-heading">Vuoi unirti alla redazione?</h5>
+          <a th:href="@{/operations/career/request}"
+            class="btn btn-sm px-4 py-2 rounded-pill fw-medium text-decoration-none d-inline-flex align-items-center gap-2 custom-career-btn">
+            <i class="fa-solid fa-briefcase small"></i> Lavora con noi
           </a>
         </div>
-        <!-- Contact Info -->
-        <div class="col-md-4 mb-3 text-end">
-          <h5>Lavora con noi</h5>
-          <a th:href="@{/operations/career/request}" class="btn btn-primary">Richiedi</a>
+
+      </div>
+
+      <hr class="opacity-10 my-4">
+
+      <div class="row pb-4 align-items-center">
+        <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+          <p class="mb-0 text-white-50 small">© 2026 Aulab Chronicle. Tutti i diritti riservati.</p>
         </div>
       </div>
-      <div class="bg-secondary text-center py-2">
-        <p class="mb-0">© 2026 Aulab Inst. All rights reserved.</p>
-      </div>
+
     </div>
   </footer>
-  <!-- fine del footer -->
 
-  <!-- Fragment script bootstrap -->
   <script th:fragment="bootstrapScript"
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-  <!-- Fine Fragment script bootstrap -->
 </body>
 
 </html>
