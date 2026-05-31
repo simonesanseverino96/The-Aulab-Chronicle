@@ -89,7 +89,7 @@ public class UserController {
         if (existingUser != null && existingUser.getEmail() != null
                 && !existingUser.getEmail().isEmpty()) {
             result.rejectValue("email", null,
-                    "There is already an account registered with the same email");
+                    "Questa email è già usata da un'altro utente");
         }
 
         // Controllo errori di validazione

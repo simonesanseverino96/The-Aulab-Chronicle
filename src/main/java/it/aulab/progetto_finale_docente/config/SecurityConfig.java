@@ -39,11 +39,17 @@ public class SecurityConfig {
                                                                 "/articles/delete/{id}")
                                                 .hasRole("WRITER")
                                                 .requestMatchers("/register/**", "/", "/login",
-                                                                "/articles", "/images/**", "/articles/detail/**",
+                                                                "/images/**", "/articles/detail/**",
                                                                 "/categories/search/**", "/search/**",
-                                                                "/articles/search", "/operations/career/**", "/css/**")
+                                                                "/css/**")
                                                 .permitAll()
+
+                                                .requestMatchers("/articles", "/operations/career/**", 
+                                                                "/articles/search")
+                                                .authenticated()
+
                                                 .anyRequest().authenticated())
+
                                 .formLogin(form -> form.loginPage("/login")
                                                 .loginProcessingUrl("/login")
                                                 .defaultSuccessUrl("/")

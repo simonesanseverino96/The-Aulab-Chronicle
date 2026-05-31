@@ -83,12 +83,17 @@
               </p>
 
               <div class="d-flex align-items-center justify-content-between pt-3 mt-3 border-top border-light">
-                <div class="d-flex align-items-center gap-2">
+                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-2">
                   <div
                     class="author-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold">
                     <span th:text="${#strings.substring(article.user.username, 0, 1).toUpperCase()}">U</span>
                   </div>
                   <span class="text-dark fw-medium small" th:text="${article.user.username}">Username</span>
+                </div>
+
+                <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center gap-2 text-muted">
+                  <i class="fa-solid fa-lock small"></i>
+                  <span class="small fst-italic">Accedi per vedere l'autore</span>
                 </div>
               </div>
 

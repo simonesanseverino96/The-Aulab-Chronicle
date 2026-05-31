@@ -131,8 +131,24 @@
               <i class="fa-solid fa-circle text-success me-1 custom-live-dot"></i>
               <span th:text="${#authentication.principal.fullname}">Utente</span>
             </span>
-            <span class="badge text-uppercase tracking-wide custom-role-badge"
-              th:text="${#authentication.principal.authorities[0].authority.replace('ROLE_', '')}">Ruolo</span>
+            <th:block th:with="
+              isAdmin=${#authorization.expression('hasAuthority(''ROLE_ADMIN'')')},
+              isRevisor=${#authorization.expression('hasAuthority(''ROLE_REVISOR'')')},
+              isWriter=${#authorization.expression('hasAuthority(''ROLE_WRITER'')')}
+              ">
+
+              <span th:if="${isAdmin}"
+                class="badge text-uppercase tracking-wide custom-role-badge">ADMIN</span>
+
+              <span th:if="${!isAdmin and isRevisor}"
+                class="badge text-uppercase tracking-wide custom-role-badge">REVISOR</span>
+
+              <span th:if="${!isAdmin and !isRevisor and isWriter}"
+                class="badge text-uppercase tracking-wide custom-role-badge">WRITER</span>
+
+              <span th:if="${!isAdmin and !isRevisor and !isWriter}"
+                class="badge text-uppercase tracking-wide custom-role-badge">USER</span>
+            </th:block>
           </div>
 
         </div>
