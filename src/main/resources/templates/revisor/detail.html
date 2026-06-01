@@ -27,27 +27,39 @@
             <div class="col-12 col-lg-10">
                 <div class="card border-0 shadow-sm p-4 p-md-5 rounded-4 bg-white mb-5">
 
-                    <div class="position-relative overflow-hidden rounded-4 mb-4 shadow-sm" style="max-height: 450px;">
-                        <img th:src="${article.image != null} ? ${article.image.path} : '/images/default.jpg'"
-                            class="w-100 h-100" alt="Immagine di copertina"
-                            style="object-fit: cover; max-height: 450px;">
+                    <div class="mb-4 text-center position-relative" style="max-height: 450px;">
+
+                        <th:block th:if="${article.image != null}">
+                            <img th:src="${article.image.path}" class="rounded shadow img-fluid"
+                                alt="Immagine di copertina" style="object-fit: contain; max-height: 450px;">
+                        </th:block>
+
+                        <th:block th:unless="${article.image != null}">
+                            <div class="rounded shadow-sm bg-light d-flex align-items-center justify-content-center mx-auto"
+                                style="height: 300px; max-width: 400px; border: 2px dashed #dee2e6;">
+                                <span class="text-muted fst-italic">
+                                    <i class="fa-solid fa-image me-2"></i>Immagine non presente
+                                </span>
+                            </div>
+                        </th:block>
 
                         <span th:if="${article.category != null}"
-                            class="position-absolute bottom-0 start-0 m-4 badge text-uppercase px-3 py-2 fw-semibold shadow bg-dark text-white rounded-3"
+                            class="position-absolute top-0 start-0 m-4 badge text-uppercase px-3 py-2 fw-semibold shadow bg-dark text-white rounded-3"
                             style="font-size: 0.75rem; letter-spacing: 0.5px;">
                             <i class="fa-solid fa-bookmark text-info me-1"></i>
                             <span th:text="${article.category.name}">Categoria</span>
                         </span>
+
                     </div>
 
-                    <div class="mb-4 pb-3 border-bottom border-light">
+                    <div class="mb-4 pb-3 border-bottom border-light text-center">
                         <h3 class="fw-normal text-secondary lh-base" th:text="${article.subtitle}"
                             style="font-style: italic; font-size: 1.35rem;">
                             Sottotitolo dell'articolo
                         </h3>
                     </div>
 
-                    <div class="article-body-text text-dark lh-lg fs-5 mb-5"
+                    <div class="article-body-text text-dark lh-lg fs-5 mb-5 text-center"
                         style="white-space: pre-line; text-align: justify;">
                         <p class="mb-0" th:text="${article.body}">Corpo del testo...</p>
                     </div>

@@ -46,9 +46,9 @@
     <div class="row justify-content-center">
       <div class="col-12 col-md-8">
         <!-- Immagine -->
-        <div class="mb-5 rounded overflow-hidden shadow">
-          <img th:src="${article.image != null} ? ${article.image.path} : '/images/default.jpg'" class="w-100"
-            alt="Immagine articolo" style="max-height: 500px; object-fit: cover" />
+        <div class="mb-5 text-center">
+          <img th:src="${article.image != null} ? ${article.image.path} : '/images/default.jpg'" class="rounded shadow img-fluid"
+            alt="Immagine articolo" style="max-height: 600px;" />
         </div>
 
         <!-- Corpo articolo -->

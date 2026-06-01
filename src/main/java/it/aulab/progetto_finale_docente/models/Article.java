@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,17 +32,17 @@ public class Article {
     private Long id;
 
     @Column(nullable = false, length = 100)
-    @NotEmpty
+    @NotEmpty(message = "Il titolo non deve essere vuoto")
     @Size(max = 100)
     private String title;
 
     @Column(nullable = false, length = 100)
-    @NotEmpty
+    @NotEmpty(message = "Il sottotitolo non deve essere vuoto")
     @Size(max = 100)
     private String subtitle;
 
     @Column(nullable = false, length = 1000)
-    @NotEmpty
+    @NotEmpty(message = "Il corpo dell''articolo non deve essere vuoto")
     @Size(max = 1000)
     private String body;
 
@@ -58,6 +59,7 @@ public class Article {
 
     @ManyToOne
     @JsonIgnoreProperties({ "articles" })
+    @NotNull(message = "Devi selezionare una categoria per pubblicare l''articolo.")
     private Category category;
 
     @OneToOne(mappedBy = "article")

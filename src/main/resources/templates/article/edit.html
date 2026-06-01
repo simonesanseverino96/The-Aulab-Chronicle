@@ -61,9 +61,13 @@ html
                     </div>
 
                     <!-- Immagine attuale -->
-                    <div class="mb-3 d-flex flex-column" th:if="${article.image != null}">
+                    <div class="mb-3" th:if="${article.image != null}">
                         <label for="image" class="form-label">Immagine dell'articolo</label>
-                        <img th:src="${article.image.path}" id="image" alt="${article.image.path}">
+
+                        <div class="text-center mt-2">
+                            <img th:src="${article.image.path}" id="image" class="rounded shadow img-fluid"
+                                alt="Anteprima" style="max-height: 450px;">
+                        </div>
                     </div>
 
                     <div th:unless="${article.image != null}">
