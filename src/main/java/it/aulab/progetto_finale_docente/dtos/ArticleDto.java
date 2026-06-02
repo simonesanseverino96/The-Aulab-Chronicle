@@ -23,4 +23,5 @@ public class ArticleDto {
     private User user;
     private Category category;
     private Image image;
+    private int viewCount;
 }

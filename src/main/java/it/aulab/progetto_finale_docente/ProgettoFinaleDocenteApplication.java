@@ -24,7 +24,7 @@ public class ProgettoFinaleDocenteApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-	// Bean per la mappatura tra Model e DTO
+	// Bean per la mappatura e tra Model e DTO
 	@Bean
 	public ModelMapper instanceModelMapper() {
 		ModelMapper mapper = new ModelMapper();

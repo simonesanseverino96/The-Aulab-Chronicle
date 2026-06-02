@@ -1,6 +1,7 @@
 package it.aulab.progetto_finale_docente.models;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -46,7 +47,7 @@ public class Article {
     @Size(max = 1000)
     private String body;
 
-    @Column(nullable = true, length = 8)
+    @Column(nullable = true)
     private LocalDate publishDate;
 
     @Column(nullable = true)
@@ -66,6 +67,11 @@ public class Article {
     @JsonIgnoreProperties({ "article" })
     private Image image;
 
+    // Contatore visualizzazioni 
+    @Column(name = "view_count", nullable = false)
+    private int viewCount = 0;
+
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -73,15 +79,17 @@ public class Article {
         if (obj == null || getClass() != obj.getClass())
             return false;
         Article article = (Article) obj;
-        if (title.equals(article.getTitle()) &&
-                subtitle.equals(article.getSubtitle()) &&
-                body.equals(article.getBody()) &&
-                publishDate.equals(article.getPublishDate()) &&
-                category.getName().equals(article.getCategory().getName()) &&
-                image != null && article.getImage() != null &&
-                image.getPath().equals(article.getImage().getPath())) {
-            return true;
-        }
-        return false;
+        
+        return Objects.equals(title, article.title) &&
+               Objects.equals(subtitle, article.subtitle) &&
+               Objects.equals(body, article.body) &&
+               Objects.equals(publishDate, article.publishDate) &&
+               Objects.equals(category != null ? category.getName() : null, article.category != null ? article.category.getName() : null) &&
+               Objects.equals(image != null ? image.getPath() : null, article.image != null ? article.image.getPath() : null);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, subtitle, body, publishDate);
     }
 }

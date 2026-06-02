@@ -44,14 +44,12 @@ public class ArticleController {
     public String articlesIndex(Model viewModel) {
         viewModel.addAttribute("title", "Tutti gli articoli");
 
-        // Prendiamo tutti gli articoli, filtriamo solo quelli accettati dai revisori
         // (isAccepted == true)
         List<ArticleDto> articles = articleService.readAll()
                 .stream()
                 .filter(a -> Boolean.TRUE.equals(a.getIsAccepted()))
                 .collect(Collectors.toList());
 
-        // Ordiniamo gli articoli in base alla data di pubblicazione, invertendo
         // l'ordine (dal più recente)
         Collections.sort(articles, Comparator.comparing(
                 ArticleDto::getPublishDate,
@@ -97,7 +95,11 @@ public class ArticleController {
     @GetMapping("detail/{id}")
     public String detailArticle(@PathVariable Long id, Model viewModel) {
         viewModel.addAttribute("title", "Article detail");
-        viewModel.addAttribute("article", articleService.read(id));
+        // 1. Recuperiamo l'articolo 
+        ArticleDto articleDto = articleService.read(id);
+        viewModel.addAttribute("article", articleDto);
+        // 2. Incrementiamo il contatore chiamando una logica nel Service
+        articleService.incrementViews(id);
         return "article/detail";
     }
 

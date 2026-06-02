@@ -60,7 +60,7 @@
         <span class="text-muted small d-none d-md-inline">Aggiornato pochi istanti fa</span>
       </div>
 
-      <div class="row g-4 justify-content-start">
+      <div class="row g-4 justify-content-start mb-5">
         <div th:each="article : ${articles}" class="col-12 col-md-6 col-lg-4 d-flex">
           <div class="card article-card w-100 d-flex flex-column border-0">
 
@@ -108,6 +108,65 @@
       </div>
     </div>
 
+    <div th:if="${mostRead != null AND mostRead.size() > 0}" class="mt-5 pt-4">
+      <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3 section-header">
+        <h2 class="fw-bold m-0 main-section-title text-danger">
+          <i class="fa-solid fa-fire me-2"></i>Gli articoli più letti
+        </h2>
+        <span class="badge bg-danger text-uppercase px-2 py-1 small">Popolari</span>
+      </div>
+
+      <div class="row g-4 justify-content-start">
+        <div th:each="art : ${mostRead}" class="col-12 col-md-6 col-lg-4 d-flex">
+          <div class="card article-card w-100 d-flex flex-column border-0 shadow-sm">
+
+            <div class="card-img-container position-relative overflow-hidden">
+              <img th:src="${art.image != null} ? ${art.image.path} : '/images/default.jpg'"
+                class="w-100 h-100 card-article-img" alt="Immagine articolo" />
+              <span
+                class="position-absolute top-0 end-0 m-3 badge bg-dark opacity-75 rounded-pill px-2.5 py-1.5 small text-white">
+                <i class="fa-regular fa-eye me-1"></i> <span th:text="${art.viewCount}">0</span> letture
+              </span>
+              <span
+                class="position-absolute bottom-0 start-0 m-3 badge text-uppercase px-2.5 py-1.5 fw-semibold shadow-sm category-badge">
+                <i class="fa-solid fa-bookmark text-info me-1"></i>
+                <span th:text="${art.category != null ? art.category.name : 'Generale'}">Categoria</span>
+              </span>
+            </div>
+
+            <div class="card-body p-4 d-flex flex-column bg-white">
+              <h5 class="card-title fw-bold mb-2 text-dark text-truncate-2" th:text="${art.title}">
+                Titolo dell'articolo
+              </h5>
+              <p class="card-text text-muted small flex-grow-1 text-truncate-3" th:text="${art.subtitle}">
+                Sottotitolo dell'articolo o estratto riassuntivo del testo iniziale...
+              </p>
+
+              <div class="d-flex align-items-center justify-content-between pt-3 mt-3 border-top border-light">
+                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-2">
+                  <div
+                    class="author-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold bg-danger">
+                    <span th:text="${#strings.substring(art.user.username, 0, 1).toUpperCase()}">U</span>
+                  </div>
+                  <span class="text-dark fw-medium small" th:text="${art.user.username}">Username</span>
+                </div>
+
+                <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center gap-2 text-muted">
+                  <i class="fa-solid fa-lock small"></i>
+                  <span class="small fst-italic">Accedi per vedere l'autore</span>
+                </div>
+              </div>
+
+              <a th:href="@{/articles/detail/{id}(id=${art.id})}"
+                class="btn btn-outline-danger w-100 rounded-pill mt-4 d-flex align-items-center justify-content-center gap-2 py-2">
+                <span>Leggi il trend</span><i class="fa-solid fa-arrow-right small"></i>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
     <div th:unless="${articles != null AND articles.size() > 0}" class="row justify-content-center text-center py-5">
       <div class="col-md-6 py-5 rounded-4 empty-state-box">
         <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle empty-state-icon-box">

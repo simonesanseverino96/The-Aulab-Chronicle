@@ -48,17 +48,20 @@ public class UserController {
                 .filter(a -> Boolean.TRUE.equals(a.getIsAccepted()))
                 .collect(Collectors.toList());
 
-        // Ordina dal più recente
         Collections.sort(articles, Comparator.comparing(
                 ArticleDto::getPublishDate,
                 Comparator.nullsLast(Comparator.reverseOrder())));
 
-        // Prendi solo i primi 3
         List<ArticleDto> lastThreeArticles = articles.stream()
                 .limit(3)
                 .collect(Collectors.toList());
 
         viewModel.addAttribute("articles", lastThreeArticles);
+
+        List<ArticleDto> mostReadArticles = articleService.readMostRead();
+
+        viewModel.addAttribute("mostRead", mostReadArticles);
+
         return "home";
     }
 

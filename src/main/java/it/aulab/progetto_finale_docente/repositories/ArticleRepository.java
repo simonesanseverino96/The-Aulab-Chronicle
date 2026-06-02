@@ -30,4 +30,7 @@ public interface ArticleRepository extends ListCrudRepository<Article, Long> {
             "LOWER(a.category.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Article> search(@Param("searchTerm") String searchTerm);
 
+    // Sostituisci il vecchio metodo automatico con questa query esplicita nativa/JPQL:
+    @Query(value = "SELECT * FROM articles WHERE is_accepted = true ORDER BY view_count DESC LIMIT 3", nativeQuery = true)
+    List<Article> findTop3ByOrderByViewCountDesc();
 }

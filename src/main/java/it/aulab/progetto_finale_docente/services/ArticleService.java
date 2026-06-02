@@ -137,22 +137,22 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void delete(Long key) {
         if (articleRepository.existsById(key)) {
             Article article = articleRepository.findById(key).get();
             try {
                 if (article.getImage() != null) {
                     String path = article.getImage().getPath();
-                    // Prima eliminiamo l'immagine dal DB
+                    it.aulab.progetto_finale_docente.models.Image image = article.getImage();
+                    article.setImage(null);
+                    image.setArticle(null);
                     imageService.deleteImage(path);
-                    // Aspettiamo un po' per l'operazione asincrona
-                    Thread.sleep(500);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // Poi eliminiamo l'articolo
-            articleRepository.deleteById(key);
+            articleRepository.delete(article);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -191,4 +191,25 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
         return dtos;
     }
+
+    // Incrementa il contatore delle visualizzazioni
+    @org.springframework.transaction.annotation.Transactional
+    public void incrementViews(Long id) {
+        Optional<Article> optArticle = articleRepository.findById(id);
+        if (optArticle.isPresent()) {
+            Article article = optArticle.get();
+            article.setViewCount(article.getViewCount() + 1);
+            articleRepository.save(article);
+        }
+    }
+
+   
+    public List<ArticleDto> readMostRead() {
+        List<ArticleDto> dtos = new ArrayList<>();
+        for (Article article : articleRepository.findTop3ByOrderByViewCountDesc()) {
+            dtos.add(modelMapper.map(article, ArticleDto.class));
+        }
+        return dtos;
+    }
+
 }
