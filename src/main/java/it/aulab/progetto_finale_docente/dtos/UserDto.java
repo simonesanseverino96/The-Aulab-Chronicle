@@ -1,7 +1,7 @@
 package it.aulab.progetto_finale_docente.dtos;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +25,7 @@ public class UserDto {
     private String lastName;
 
     @NotEmpty(message = "L'email non può essere vuota")
-    @Email(message = "Inserisci un indirizzo email valido")
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Inserisci un formato email valido (es. mario@email.com)")
     private String email;
 
     @NotEmpty(message = "La password non può essere vuota")
