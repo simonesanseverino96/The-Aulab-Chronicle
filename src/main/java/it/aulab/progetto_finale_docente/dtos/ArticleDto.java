@@ -1,6 +1,7 @@
 package it.aulab.progetto_finale_docente.dtos;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import it.aulab.progetto_finale_docente.models.Category;
 import it.aulab.progetto_finale_docente.models.Image;
@@ -22,6 +23,6 @@ public class ArticleDto {
     private Boolean isAccepted;
     private User user;
     private Category category;
-    private Image image;
+    private List<Image> images;
     private int viewCount;
 }

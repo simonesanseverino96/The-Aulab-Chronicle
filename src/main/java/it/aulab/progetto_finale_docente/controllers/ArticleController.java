@@ -37,30 +37,28 @@ public class ArticleController {
     private CrudService<CategoryDto, Category, Long> categoryService;
 
     @Autowired
+    private org.modelmapper.ModelMapper modelMapper;
+
+    @Autowired
     private ArticleService articleService;
 
-    // Rotta index degli articoli
     @GetMapping
     public String articlesIndex(Model viewModel) {
         viewModel.addAttribute("title", "Tutti gli articoli");
 
-        // (isAccepted == true)
         List<ArticleDto> articles = articleService.readAll()
                 .stream()
                 .filter(a -> Boolean.TRUE.equals(a.getIsAccepted()))
                 .collect(Collectors.toList());
 
-        // l'ordine (dal più recente)
         Collections.sort(articles, Comparator.comparing(
                 ArticleDto::getPublishDate,
                 Comparator.nullsLast(Comparator.reverseOrder())));
 
-        // Prendiamo solo i primi 3 articoli
         viewModel.addAttribute("articles", articles);
         return "article/articles";
     }
 
-    // Rotta per la visualizzazione della pagina di creazione di un nuovo articolo
     @GetMapping("create")
     public String articleCreate(Model viewModel) {
         viewModel.addAttribute("title", "Crea un articolo");
@@ -69,13 +67,10 @@ public class ArticleController {
         return "article/create";
     }
 
-    // Rotta per il salvataggio effettivo dell'articolo (e dell'immagine allegata)
     @PostMapping
     public String articleStore(@Valid @ModelAttribute("article") Article article, BindingResult result,
-            RedirectAttributes redirectAttributes, Principal principal, MultipartFile file, Model viewModel) {
+            RedirectAttributes redirectAttributes, Principal principal, @RequestParam("files") MultipartFile[] files, Model viewModel) {
 
-        // Se ci sono errori di validazione nei campi del form, ricarichiamo la pagina
-        // mostrando i problemi
         if (result.hasErrors()) {
             viewModel.addAttribute("title", "Crea un articolo");
             viewModel.addAttribute("article", article);
@@ -83,27 +78,21 @@ public class ArticleController {
             return "article/create";
         }
 
-        // Invochiamo il servizio che salverà l'articolo sul DB e caricherà l'immagine
-        // sul cloud
-        articleService.create(article, principal, file);
+        articleService.createMultiple(article, principal, files);
         redirectAttributes.addFlashAttribute("successMessage", "Articolo aggiunto con successo!");
 
         return "redirect:/";
     }
 
-    // Rotta di dettaglio di un articolo
     @GetMapping("detail/{id}")
     public String detailArticle(@PathVariable Long id, Model viewModel) {
         viewModel.addAttribute("title", "Article detail");
-        // 1. Recuperiamo l'articolo 
         ArticleDto articleDto = articleService.read(id);
         viewModel.addAttribute("article", articleDto);
-        // 2. Incrementiamo il contatore chiamando una logica nel Service
         articleService.incrementViews(id);
         return "article/detail";
     }
 
-    // Rotta dettaglio di un articolo per il revisore
     @GetMapping("revisor/detail/{id}")
     public String revisorDetailArticle(@PathVariable Long id, Model viewModel) {
         viewModel.addAttribute("title", "Article detail");
@@ -111,7 +100,6 @@ public class ArticleController {
         return "revisor/detail";
     }
 
-    // Rotta dedicata all'azione del revisore
     @PostMapping("/accept")
     public String articleSetAccepted(@RequestParam("action") String action,
             @RequestParam("articleId") Long articleId,
@@ -128,7 +116,6 @@ public class ArticleController {
         return "redirect:/revisor/dashboard";
     }
 
-    // Rotta di ricerca di un articolo
     @GetMapping("/search")
     public String articleSearch(@RequestParam("keyword") String keyword, Model viewModel) {
         viewModel.addAttribute("title", "Tutti gli articoli trovati");
@@ -142,7 +129,6 @@ public class ArticleController {
         return "article/articles";
     }
 
-    // Rotta di modifica di un articolo
     @GetMapping("/edit/{id}")
     public String editArticle(@PathVariable Long id, Model viewModel) {
         viewModel.addAttribute("title", "Article update");
@@ -151,7 +137,6 @@ public class ArticleController {
         return "article/edit";
     }
 
-    // Rotta di memorizzazione modifica di un articolo
     @PostMapping("/update/{id}")
     public String articleUpdate(@PathVariable Long id,
             @Valid @ModelAttribute("article") Article article,
@@ -163,7 +148,12 @@ public class ArticleController {
 
         if (result.hasErrors()) {
             viewModel.addAttribute("title", "Article update");
-            article.setImage(articleService.read(id).getImage());
+            
+            it.aulab.progetto_finale_docente.dtos.ArticleDto originalDto = articleService.read(id);
+            if (originalDto != null) {
+                article.setImages(modelMapper.map(originalDto, Article.class).getImages());
+            }
+            
             viewModel.addAttribute("article", article);
             viewModel.addAttribute("categories", categoryService.readAll());
             return "article/edit";
@@ -174,7 +164,6 @@ public class ArticleController {
         return "redirect:/articles";
     }
 
-    // Rotta per la cancellazione di un articolo
     @GetMapping("/delete/{id}")
     public String articleDelete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         articleService.delete(id);

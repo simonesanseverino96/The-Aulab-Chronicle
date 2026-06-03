@@ -56,12 +56,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
     }
 
-    
-    @Override
-    public ArticleDto create(Article article, Principal principal, MultipartFile file) {
-        String url = "";
-
-        // Recuperiamo l'utente loggato e lo associamo all'articolo
+    public ArticleDto createMultiple(Article article, Principal principal, MultipartFile[] files) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -69,64 +64,66 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
             article.setUser(user);
         }
 
-        // Gestione immagine (Salvataggio su Cloud asincrono)
-        if (!file.isEmpty()) {
-            try {
-                CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
-                url = futureUrl.get();
-            } catch (Exception e) {
-                e.printStackTrace();
+        article.setIsAccepted(null);
+        Article savedArticle = articleRepository.save(article);
+
+        if (files != null && files.length > 0) {
+            for (int i = 0; i < files.length; i++) {
+                MultipartFile file = files[i];
+                if (!file.isEmpty()) {
+                    try {
+                        CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
+                        String url = futureUrl.get();
+                        
+                        boolean isPrimary = (i == 0);
+                        saveImageOnDBWithPrimaryFlag(url, savedArticle, isPrimary);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 
-        // Articolo va in revisione di default
-        article.setIsAccepted(null);
+        return modelMapper.map(savedArticle, ArticleDto.class);
+    }
 
-        ArticleDto dto = modelMapper.map(articleRepository.save(article), ArticleDto.class);
-
-        // Se l'immagine è presente, colleghiamo l'URL dell'immagine all'articolo nel DB
-        if (!file.isEmpty()) {
-            imageService.saveImageOnDB(url, article);
-        }
-        return dto;
+    @Override
+    public ArticleDto create(Article article, Principal principal, MultipartFile file) {
+        return createMultiple(article, principal, new MultipartFile[]{file});
     }
 
     @Override
     public ArticleDto update(Long key, Article updatedArticle, MultipartFile file) {
-        String url = "";
         if (articleRepository.existsById(key)) {
             updatedArticle.setId(key);
             Article article = articleRepository.findById(key).get();
 
-            // Impostiamo l'utente dell'articolo originale
             updatedArticle.setUser(article.getUser());
 
             if (!file.isEmpty()) {
                 try {
-                    // Eliminiamo la vecchia immagine se esiste
-                    if (article.getImage() != null) {
-                        imageService.deleteImage(article.getImage().getPath());
+                    if (article.getImages() != null && !article.getImages().isEmpty()) {
+                        for (it.aulab.progetto_finale_docente.models.Image oldImg : article.getImages()) {
+                            imageService.deleteImage(oldImg.getPath());
+                        }
+                        article.getImages().clear();
                     }
-                    // Salviamo la nuova immagine
+                    
                     CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
-                    url = futureUrl.get();
-                    imageService.saveImageOnDB(url, updatedArticle);
-                    // L'articolo torna in revisione
+                    String url = futureUrl.get();
+                    saveImageOnDBWithPrimaryFlag(url, updatedArticle, true);
+                    
                     updatedArticle.setIsAccepted(null);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (article.getImage() == null) {
-                // Nessuna immagine né prima né dopo
+            } else if (article.getImages() == null || article.getImages().isEmpty()) {
                 updatedArticle.setIsAccepted(article.getIsAccepted());
             } else {
-                // Immagine non modificata
-                updatedArticle.setImage(article.getImage());
+                updatedArticle.setImages(article.getImages());
                 if (!updatedArticle.equals(article)) {
-                    // Articolo modificato, torna in revisione
                     updatedArticle.setIsAccepted(null);
                 } else {
-                    // Articolo non modificato
                     updatedArticle.setIsAccepted(article.getIsAccepted());
                 }
             }
@@ -142,12 +139,10 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         if (articleRepository.existsById(key)) {
             Article article = articleRepository.findById(key).get();
             try {
-                if (article.getImage() != null) {
-                    String path = article.getImage().getPath();
-                    it.aulab.progetto_finale_docente.models.Image image = article.getImage();
-                    article.setImage(null);
-                    image.setArticle(null);
-                    imageService.deleteImage(path);
+                if (article.getImages() != null && !article.getImages().isEmpty()) {
+                    for (it.aulab.progetto_finale_docente.models.Image img : article.getImages()) {
+                        imageService.deleteImage(img.getPath());
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -158,7 +153,14 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
     }
 
-    // Ricerca per categoria
+    private void saveImageOnDBWithPrimaryFlag(String url, Article article, boolean isPrimary) {
+        it.aulab.progetto_finale_docente.models.Image image = new it.aulab.progetto_finale_docente.models.Image();
+        image.setPath(url);
+        image.setArticle(article);
+        image.setPrimary(isPrimary);
+        imageService.saveImageOnDB(url, article); 
+    }
+
     public List<ArticleDto> searchByCategory(it.aulab.progetto_finale_docente.models.Category category) {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.findByCategory(category)) {
@@ -167,7 +169,6 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         return dtos;
     }
 
-    // Ricerca per autore
     public List<ArticleDto> searchByAuthor(User user) {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.findByUser(user)) {
@@ -176,14 +177,12 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         return dtos;
     }
 
-    // Accetta o rifiuta articolo
     public void setIsAccepted(Boolean result, Long id) {
         Article article = articleRepository.findById(id).get();
         article.setIsAccepted(result);
         articleRepository.save(article);
     }
 
-    // Ricerca full-text
     public List<ArticleDto> search(String keyword) {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.search(keyword)) {
@@ -192,7 +191,6 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         return dtos;
     }
 
-    // Incrementa il contatore delle visualizzazioni
     @org.springframework.transaction.annotation.Transactional
     public void incrementViews(Long id) {
         Optional<Article> optArticle = articleRepository.findById(id);
@@ -203,7 +201,6 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
     }
 
-   
     public List<ArticleDto> readMostRead() {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.findTop3ByOrderByViewCountDesc()) {
@@ -211,5 +208,4 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
         return dtos;
     }
-
 }

@@ -63,9 +63,9 @@ public class Article {
     @NotNull(message = "Devi selezionare una categoria per pubblicare l''articolo.")
     private Category category;
 
-    @OneToOne(mappedBy = "article")
+    @jakarta.persistence.OneToMany(mappedBy = "article", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({ "article" })
-    private Image image;
+    private java.util.List<Image> images = new java.util.ArrayList<>();
 
     // Contatore visualizzazioni 
     @Column(name = "view_count", nullable = false)
@@ -85,7 +85,7 @@ public class Article {
                Objects.equals(body, article.body) &&
                Objects.equals(publishDate, article.publishDate) &&
                Objects.equals(category != null ? category.getName() : null, article.category != null ? article.category.getName() : null) &&
-               Objects.equals(image != null ? image.getPath() : null, article.image != null ? article.image.getPath() : null);
+               Objects.equals(images, article.images); // Confronta la lista di immagini in sicurezza
     }
 
     @Override

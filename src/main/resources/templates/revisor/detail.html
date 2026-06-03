@@ -20,32 +20,33 @@
             <div class="col-12 mb-5">
                 <div class="dashboard-header shadow">
                     <h1 class="display-4 fw-bold mb-2" th:text="${article.title}">Titolo dell'articolo</h1>
-                    <p class="lead mb-0">Stai visionando l'articolo in attesa di approvazione o rifiuto finale</p>
+                    <p class="lead mb-0">Stai visionando l'articolo in attesa di approvazione o triage finale</p>
                 </div>
             </div>
 
             <div class="col-12 col-lg-10">
                 <div class="card border-0 shadow-sm p-4 p-md-5 rounded-4 bg-white mb-5">
 
-                    <div class="mb-4 text-center position-relative" style="max-height: 450px;">
+                    <div class="mb-5 text-center position-relative">
+                        
+                        <div class="text-center mb-3">
+                            <img th:src="${#lists.isEmpty(article.images)} ? '/images/default.jpg' : ${article.images.^[primary == true]?.path ?: article.images[0].path}" 
+                                 class="rounded shadow img-fluid w-100 object-fit-cover"
+                                 alt="Immagine articolo" style="max-height: 450px;" id="revisor-main-image" />
+                        </div>
 
-                        <th:block th:if="${article.image != null}">
-                            <img th:src="${article.image.path}" class="rounded shadow img-fluid"
-                                alt="Immagine di copertina" style="object-fit: contain; max-height: 450px;">
-                        </th:block>
-
-                        <th:block th:unless="${article.image != null}">
-                            <div class="rounded shadow-sm bg-light d-flex align-items-center justify-content-center mx-auto"
-                                style="height: 300px; max-width: 400px; border: 2px dashed #dee2e6;">
-                                <span class="text-muted fst-italic">
-                                    <i class="fa-solid fa-image me-2"></i>Immagine non presente
-                                </span>
+                        <div class="row g-2 justify-content-center mt-2" th:if="${article.images != null and #lists.size(article.images) > 1}">
+                            <div class="col-3 col-sm-2" th:each="img : ${article.images}">
+                                <div class="ratio ratio-4x3 border rounded overflow-hidden shadow-sm" style="cursor: pointer;">
+                                    <img th:src="${img.path}" class="object-fit-cover w-100 h-100" alt="Miniatura" 
+                                         onclick="document.getElementById('revisor-main-image').src = this.src">
+                                </div>
                             </div>
-                        </th:block>
+                        </div>
 
                         <span th:if="${article.category != null}"
                             class="position-absolute top-0 start-0 m-4 badge text-uppercase px-3 py-2 fw-semibold shadow bg-dark text-white rounded-3"
-                            style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            style="font-size: 0.75rem; letter-spacing: 0.5px; z-index: 3;">
                             <i class="fa-solid fa-bookmark text-info me-1"></i>
                             <span th:text="${article.category.name}">Categoria</span>
                         </span>
@@ -74,7 +75,7 @@
                         </a>
 
                         <div class="d-flex gap-2 w-100 w-md-auto justify-content-end">
-                            <form th:action="@{/articles/accept}" method="post" th:object="${article}" class="m-0">
+                            <form th:action="@{/articles/accept}" method="post" class="m-0">
                                 <input type="hidden" name="action" value="reject">
                                 <input type="hidden" name="articleId" th:value="${article.id}">
                                 <button type="submit"
