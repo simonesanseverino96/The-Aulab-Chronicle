@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -67,11 +66,10 @@ public class Article {
     @JsonIgnoreProperties({ "article" })
     private java.util.List<Image> images = new java.util.ArrayList<>();
 
-    // Contatore visualizzazioni 
+    // Contatore visualizzazioni
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 
-    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -79,13 +77,15 @@ public class Article {
         if (obj == null || getClass() != obj.getClass())
             return false;
         Article article = (Article) obj;
-        
+
         return Objects.equals(title, article.title) &&
-               Objects.equals(subtitle, article.subtitle) &&
-               Objects.equals(body, article.body) &&
-               Objects.equals(publishDate, article.publishDate) &&
-               Objects.equals(category != null ? category.getName() : null, article.category != null ? article.category.getName() : null) &&
-               Objects.equals(images, article.images); // Confronta la lista di immagini in sicurezza
+                Objects.equals(subtitle, article.subtitle) &&
+                Objects.equals(body, article.body) &&
+                Objects.equals(publishDate, article.publishDate) &&
+                Objects.equals(category != null ? category.getName() : null,
+                        article.category != null ? article.category.getName() : null)
+                &&
+                Objects.equals(images, article.images); // Confronta la lista di immagini in sicurezza
     }
 
     @Override
