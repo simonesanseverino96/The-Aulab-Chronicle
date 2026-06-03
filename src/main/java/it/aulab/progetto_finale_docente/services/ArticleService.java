@@ -47,6 +47,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public ArticleDto read(Long key) {
         Optional<Article> optArticle = articleRepository.findById(key);
         if (optArticle.isPresent()) {
