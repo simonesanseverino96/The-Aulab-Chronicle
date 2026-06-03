@@ -43,6 +43,7 @@ public class UserController {
     // Rotta di home
     @GetMapping("/")
     public String home(Model viewModel) {
+        viewModel.addAttribute("title", "Home");
         List<ArticleDto> articles = articleService.readAll()
                 .stream()
                 .filter(a -> Boolean.TRUE.equals(a.getIsAccepted()))
@@ -68,13 +69,15 @@ public class UserController {
     // Rotta per la registrazione
     @GetMapping("/register")
     public String register(Model model) {
+        model.addAttribute("title", "Registrati");
         model.addAttribute("user", new UserDto());
         return "auth/register";
     }
 
     // Rotta per la login
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("title", "Accedi");
         return "auth/login";
     }
 

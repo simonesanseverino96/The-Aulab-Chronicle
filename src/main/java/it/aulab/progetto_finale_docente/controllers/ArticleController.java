@@ -69,7 +69,8 @@ public class ArticleController {
 
     @PostMapping
     public String articleStore(@Valid @ModelAttribute("article") Article article, BindingResult result,
-            RedirectAttributes redirectAttributes, Principal principal, @RequestParam("files") MultipartFile[] files, Model viewModel) {
+            RedirectAttributes redirectAttributes, Principal principal, @RequestParam("files") MultipartFile[] files,
+            Model viewModel) {
 
         if (result.hasErrors()) {
             viewModel.addAttribute("title", "Crea un articolo");
@@ -86,8 +87,8 @@ public class ArticleController {
 
     @GetMapping("detail/{id}")
     public String detailArticle(@PathVariable Long id, Model viewModel) {
-        viewModel.addAttribute("title", "Article detail");
         ArticleDto articleDto = articleService.read(id);
+        viewModel.addAttribute("title", articleDto.getTitle());
         viewModel.addAttribute("article", articleDto);
         articleService.incrementViews(id);
         return "article/detail";
@@ -95,8 +96,9 @@ public class ArticleController {
 
     @GetMapping("revisor/detail/{id}")
     public String revisorDetailArticle(@PathVariable Long id, Model viewModel) {
-        viewModel.addAttribute("title", "Article detail");
-        viewModel.addAttribute("article", articleService.read(id));
+        ArticleDto articleDto = articleService.read(id);
+        viewModel.addAttribute("title", articleDto.getTitle());
+        viewModel.addAttribute("article", articleDto);
         return "revisor/detail";
     }
 
@@ -131,8 +133,9 @@ public class ArticleController {
 
     @GetMapping("/edit/{id}")
     public String editArticle(@PathVariable Long id, Model viewModel) {
-        viewModel.addAttribute("title", "Article update");
-        viewModel.addAttribute("article", articleService.read(id));
+        ArticleDto articleDto = articleService.read(id);
+        viewModel.addAttribute("title", "Modifica: " + articleDto.getTitle());
+        viewModel.addAttribute("article", articleDto);
         viewModel.addAttribute("categories", categoryService.readAll());
         return "article/edit";
     }
@@ -147,13 +150,13 @@ public class ArticleController {
             Model viewModel) {
 
         if (result.hasErrors()) {
-            viewModel.addAttribute("title", "Article update");
-            
+            viewModel.addAttribute("title", "Modifica: " + article.getTitle());
+
             it.aulab.progetto_finale_docente.dtos.ArticleDto originalDto = articleService.read(id);
             if (originalDto != null) {
                 article.setImages(modelMapper.map(originalDto, Article.class).getImages());
             }
-            
+
             viewModel.addAttribute("article", article);
             viewModel.addAttribute("categories", categoryService.readAll());
             return "article/edit";
