@@ -21,6 +21,7 @@ public class UserDto {
     private String firstName;
 
     @NotEmpty(message = "Il cognome non può essere vuoto")
+    @Size(min = 4, message = "il cognome deve avere almeno 4 caratteri")
     private String lastName;
 
     @NotEmpty(message = "L'email non può essere vuota")
