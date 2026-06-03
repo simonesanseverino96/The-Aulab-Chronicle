@@ -29,13 +29,15 @@ public class Image {
     @Column(nullable = false, length = 255)
     private String path;
 
-    // Cambiato da @OneToOne a @ManyToOne per supportare più immagini per lo stesso articolo
+    // Cambiato da @OneToOne a @ManyToOne per supportare più immagini per lo stesso
+    // articolo
     @ManyToOne
     @JoinColumn(name = "article_id")
     @JsonIgnoreProperties({ "images" })
     private Article article;
 
     // Nuovo campo: indica se questa immagine è la principale (copertina)
+    @Builder.Default
     @Column(nullable = false)
     private boolean isPrimary = false;
 }

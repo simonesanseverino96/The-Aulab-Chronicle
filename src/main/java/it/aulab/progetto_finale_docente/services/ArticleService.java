@@ -37,6 +37,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     private ImageService imageService;
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public List<ArticleDto> readAll() {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.findAll()) {
@@ -74,7 +75,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
                     try {
                         CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
                         String url = futureUrl.get();
-                        
+
                         boolean isPrimary = (i == 0);
                         saveImageOnDBWithPrimaryFlag(url, savedArticle, isPrimary);
                     } catch (Exception e) {
@@ -89,7 +90,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
 
     @Override
     public ArticleDto create(Article article, Principal principal, MultipartFile file) {
-        return createMultiple(article, principal, new MultipartFile[]{file});
+        return createMultiple(article, principal, new MultipartFile[] { file });
     }
 
     @Override
@@ -108,11 +109,11 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
                         }
                         article.getImages().clear();
                     }
-                    
+
                     CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
                     String url = futureUrl.get();
                     saveImageOnDBWithPrimaryFlag(url, updatedArticle, true);
-                    
+
                     updatedArticle.setIsAccepted(null);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -158,9 +159,10 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         image.setPath(url);
         image.setArticle(article);
         image.setPrimary(isPrimary);
-        imageService.saveImageOnDB(url, article); 
+        imageService.saveImageOnDB(url, article);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public List<ArticleDto> searchByCategory(it.aulab.progetto_finale_docente.models.Category category) {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.findByCategory(category)) {
@@ -169,6 +171,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         return dtos;
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public List<ArticleDto> searchByAuthor(User user) {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.findByUser(user)) {
@@ -183,6 +186,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         articleRepository.save(article);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public List<ArticleDto> search(String keyword) {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.search(keyword)) {
@@ -201,6 +205,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
         }
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public List<ArticleDto> readMostRead() {
         List<ArticleDto> dtos = new ArrayList<>();
         for (Article article : articleRepository.findTop3ByOrderByViewCountDesc()) {
