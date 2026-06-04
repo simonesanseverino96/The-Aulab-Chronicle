@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head th:insert="~{index :: head}"></head>
   <body>
-    <head th:insert="~{index :: navbar}"></head>
+    <div th:insert="~{index :: navbar}"></div>
 
     <div class="container my-5">
       <div class="row justify-content-center">
@@ -116,7 +116,7 @@
       </div>
     </div>
 
-    <head th:insert="~{index :: footer}"></head>
+    <div th:insert="~{index :: footer}"></div>
     <script th:replace="~{index :: bootstrapScript}"></script>
   </body>
 </html>

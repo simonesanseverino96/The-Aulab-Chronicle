@@ -173,4 +173,24 @@ public class ArticleController {
         redirectAttributes.addFlashAttribute("successMessage", "Articolo cancellato con successo!");
         return "redirect:/writer/dashboard";
     }
+
+    @GetMapping("/category/{id}")
+    @org.springframework.transaction.annotation.Transactional
+    public String articlesByCategory(@PathVariable Long id, Model viewModel) {
+        Category category = categoryService.readAll()
+                .stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst()
+                .map(dto -> modelMapper.map(dto, Category.class))
+                .orElseThrow();
+
+        List<ArticleDto> articles = articleService.searchByCategory(category)
+                .stream()
+                .filter(a -> Boolean.TRUE.equals(a.getIsAccepted()))
+                .collect(Collectors.toList());
+
+        viewModel.addAttribute("title", "Categoria: " + category.getName());
+        viewModel.addAttribute("articles", articles);
+        return "article/articles";
+    }
 }
