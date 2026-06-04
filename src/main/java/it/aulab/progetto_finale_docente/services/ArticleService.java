@@ -95,6 +95,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public ArticleDto update(Long key, Article updatedArticle, MultipartFile file) {
         if (articleRepository.existsById(key)) {
             updatedArticle.setId(key);

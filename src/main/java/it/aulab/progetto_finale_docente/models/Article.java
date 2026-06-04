@@ -31,19 +31,21 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 255)
     @NotEmpty(message = "Il titolo non deve essere vuoto")
-    @Size(max = 100)
+    @Size(max = 255)
     private String title;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 255)
     @NotEmpty(message = "Il sottotitolo non deve essere vuoto")
-    @Size(max = 100)
+    @Size(max = 255)
     private String subtitle;
 
-    @Column(nullable = false, length = 1000)
+    // Usiamo -columnDefinition = "TEXT" in MySQL non ha limite fisso (fino a 65.000
+    // caratteri)
+    @Column(nullable = false, columnDefinition = "TEXT")
     @NotEmpty(message = "Il corpo dell''articolo non deve essere vuoto")
-    @Size(max = 1000)
+
     private String body;
 
     @Column(nullable = true)
