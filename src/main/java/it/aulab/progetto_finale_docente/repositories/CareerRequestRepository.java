@@ -12,6 +12,8 @@ public interface CareerRequestRepository extends CrudRepository<CareerRequest, L
 
     List<CareerRequest> findByIsCheckedFalse();
 
+    long countByIsCheckedFalse();
+
     @Query(value = "SELECT user_id FROM users_roles", nativeQuery = true)
     List<Long> findAllUserIds();
 

@@ -23,6 +23,8 @@ public interface ArticleRepository extends ListCrudRepository<Article, Long> {
     // Cambiato da findByAcceptedIsNull a findByIsAcceptedIsNull
     List<Article> findByIsAcceptedIsNull();
 
+    long countByIsAcceptedIsNull();
+
     @Query("SELECT a FROM Article a WHERE " +
             "LOWER(a.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(a.subtitle) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
@@ -30,7 +32,8 @@ public interface ArticleRepository extends ListCrudRepository<Article, Long> {
             "LOWER(a.category.name) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Article> search(@Param("searchTerm") String searchTerm);
 
-    // Sostituisci il vecchio metodo automatico con questa query esplicita nativa/JPQL:
+    // Sostituisci il vecchio metodo automatico con questa query esplicita
+    // nativa/JPQL:
     @Query(value = "SELECT * FROM articles WHERE is_accepted = true ORDER BY view_count DESC LIMIT 3", nativeQuery = true)
     List<Article> findTop3ByOrderByViewCountDesc();
 }
