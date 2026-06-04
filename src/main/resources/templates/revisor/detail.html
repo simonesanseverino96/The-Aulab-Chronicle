@@ -1,114 +1,149 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <div th:insert="~{index :: head}"></div>
 
-<head th:insert="~{index :: head}"></head>
-
-<body>
-
+  <body>
     <head th:insert="~{index :: navbar}"></head>
 
     <div class="container mt-4" th:if="${successMessage}">
-        <div class="alert alert-success shadow-sm" role="alert">
-            <i class="fa-solid fa-circle-check me-2"></i>
-            <span th:text="${successMessage}">Messaggio di successo</span>
-        </div>
+      <div class="alert alert-success shadow-sm" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i>
+        <span th:text="${successMessage}">Messaggio di successo</span>
+      </div>
     </div>
 
     <div class="container my-5 min-vh-100 pb-5">
-        <div class="row justify-content-center">
-
-            <div class="col-12 mb-5">
-                <div class="dashboard-header shadow">
-                    <h1 class="display-4 fw-bold mb-2" th:text="${article.title}">Titolo dell'articolo</h1>
-                    <p class="lead mb-0">Stai visionando l'articolo in attesa di approvazione o triage finale</p>
-                </div>
-            </div>
-
-            <div class="col-12 col-lg-10">
-                <div class="card border-0 shadow-sm p-4 p-md-5 rounded-4 bg-white mb-5">
-
-                    <div class="mb-5 text-center position-relative">
-                        
-                        <div class="text-center mb-3">
-                            <img th:src="${#lists.isEmpty(article.images)} ? '/images/default.jpg' : ${article.images.^[primary == true]?.path ?: article.images[0].path}" 
-                                 class="rounded shadow img-fluid w-100 object-fit-cover"
-                                 alt="Immagine articolo" style="max-height: 450px;" id="revisor-main-image" />
-                        </div>
-
-                        <div class="row g-2 justify-content-center mt-2" th:if="${article.images != null and #lists.size(article.images) > 1}">
-                            <div class="col-3 col-sm-2" th:each="img : ${article.images}">
-                                <div class="ratio ratio-4x3 border rounded overflow-hidden shadow-sm" style="cursor: pointer;">
-                                    <img th:src="${img.path}" class="object-fit-cover w-100 h-100" alt="Miniatura" 
-                                         onclick="document.getElementById('revisor-main-image').src = this.src">
-                                </div>
-                            </div>
-                        </div>
-
-                        <span th:if="${article.category != null}"
-                            class="position-absolute top-0 start-0 m-4 badge text-uppercase px-3 py-2 fw-semibold shadow bg-dark text-white rounded-3"
-                            style="font-size: 0.75rem; letter-spacing: 0.5px; z-index: 3;">
-                            <i class="fa-solid fa-bookmark text-info me-1"></i>
-                            <span th:text="${article.category.name}">Categoria</span>
-                        </span>
-
-                    </div>
-
-                    <div class="mb-4 pb-3 border-bottom border-light text-center">
-                        <h3 class="fw-normal text-secondary lh-base" th:text="${article.subtitle}"
-                            style="font-style: italic; font-size: 1.35rem;">
-                            Sottotitolo dell'articolo
-                        </h3>
-                    </div>
-
-                    <div class="article-body-text text-dark lh-lg fs-5 mb-5 text-center"
-                        style="white-space: pre-line; text-align: justify;">
-                        <p class="mb-0" th:text="${article.body}">Corpo del testo...</p>
-                    </div>
-
-                    <div
-                        class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 pt-4 border-top border-light">
-
-                        <a href="#"
-                            class="btn btn-link text-decoration-none text-muted fw-medium d-flex align-items-center gap-2"
-                            onclick="goBack()">
-                            <i class="fa-solid fa-arrow-left-long"></i> Torna alla Dashboard
-                        </a>
-
-                        <div class="d-flex gap-2 w-100 w-md-auto justify-content-end">
-                            <form th:action="@{/articles/accept}" method="post" class="m-0">
-                                <input type="hidden" name="action" value="reject">
-                                <input type="hidden" name="articleId" th:value="${article.id}">
-                                <button type="submit"
-                                    class="btn btn-outline-danger rounded-pill px-4 py-2 d-flex align-items-center gap-2 fw-medium">
-                                    <i class="fa-solid fa-circle-xmark"></i> Rifiuta Bozza
-                                </button>
-                            </form>
-
-                            <form th:action="@{/articles/accept}" method="post" class="m-0">
-                                <input type="hidden" name="action" value="accept">
-                                <input type="hidden" name="articleId" th:value="${article.id}">
-                                <button type="submit"
-                                    class="btn btn-success rounded-pill px-4 py-2 d-flex align-items-center gap-2 fw-medium shadow-sm">
-                                    <i class="fa-solid fa-circle-check"></i> Accetta e Pubblica
-                                </button>
-                            </form>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-
+      <div class="row justify-content-center">
+        <div class="col-12 mb-5">
+          <div class="dashboard-header shadow">
+            <h1 class="display-4 fw-bold mb-2" th:text="${article.title}">
+              Titolo dell'articolo
+            </h1>
+            <p class="lead mb-0">
+              Stai visionando l'articolo in attesa di approvazione o triage
+              finale
+            </p>
+          </div>
         </div>
+
+        <div class="col-12 col-lg-10">
+          <div
+            class="card border-0 shadow-sm p-4 p-md-5 rounded-4 bg-white mb-5"
+          >
+            <div class="mb-5 text-center position-relative">
+              <div class="text-center mb-3">
+                <img
+                  th:src="${#lists.isEmpty(article.images)} ? '/images/default.jpg' : ${article.images.^[primary == true]?.path ?: article.images[0].path}"
+                  class="rounded shadow img-fluid w-100 object-fit-cover"
+                  alt="Immagine articolo"
+                  style="max-height: 450px"
+                  id="revisor-main-image"
+                />
+              </div>
+
+              <div
+                class="row g-2 justify-content-center mt-2"
+                th:if="${article.images != null and #lists.size(article.images) > 1}"
+              >
+                <div class="col-3 col-sm-2" th:each="img : ${article.images}">
+                  <div
+                    class="ratio ratio-4x3 border rounded overflow-hidden shadow-sm"
+                    style="cursor: pointer"
+                  >
+                    <img
+                      th:src="${img.path}"
+                      class="object-fit-cover w-100 h-100"
+                      alt="Miniatura"
+                      onclick="
+                        document.getElementById('revisor-main-image').src =
+                          this.src
+                      "
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <span
+                th:if="${article.category != null}"
+                class="position-absolute top-0 start-0 m-4 badge text-uppercase px-3 py-2 fw-semibold shadow bg-dark text-white rounded-3"
+                style="font-size: 0.75rem; letter-spacing: 0.5px; z-index: 3"
+              >
+                <i class="fa-solid fa-bookmark text-info me-1"></i>
+                <span th:text="${article.category.name}">Categoria</span>
+              </span>
+            </div>
+
+            <div class="mb-4 pb-3 border-bottom border-light text-center">
+              <h3
+                class="fw-normal text-secondary lh-base"
+                th:text="${article.subtitle}"
+                style="font-style: italic; font-size: 1.35rem"
+              >
+                Sottotitolo dell'articolo
+              </h3>
+            </div>
+
+            <div
+              class="article-body-text text-dark lh-lg fs-5 mb-5 text-center"
+              style="white-space: pre-line; text-align: justify"
+            >
+              <p class="mb-0" th:text="${article.body}">Corpo del testo...</p>
+            </div>
+
+            <div
+              class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 pt-4 border-top border-light"
+            >
+              <a
+                href="#"
+                class="btn btn-link text-decoration-none text-muted fw-medium d-flex align-items-center gap-2"
+                onclick="goBack()"
+              >
+                <i class="fa-solid fa-arrow-left-long"></i> Torna alla Dashboard
+              </a>
+
+              <div class="d-flex gap-2 w-100 w-md-auto justify-content-end">
+                <form th:action="@{/articles/accept}" method="post" class="m-0">
+                  <input type="hidden" name="action" value="reject" />
+                  <input
+                    type="hidden"
+                    name="articleId"
+                    th:value="${article.id}"
+                  />
+                  <button
+                    type="submit"
+                    class="btn btn-outline-danger rounded-pill px-4 py-2 d-flex align-items-center gap-2 fw-medium"
+                  >
+                    <i class="fa-solid fa-circle-xmark"></i> Rifiuta Bozza
+                  </button>
+                </form>
+
+                <form th:action="@{/articles/accept}" method="post" class="m-0">
+                  <input type="hidden" name="action" value="accept" />
+                  <input
+                    type="hidden"
+                    name="articleId"
+                    th:value="${article.id}"
+                  />
+                  <button
+                    type="submit"
+                    class="btn btn-success rounded-pill px-4 py-2 d-flex align-items-center gap-2 fw-medium shadow-sm"
+                  >
+                    <i class="fa-solid fa-circle-check"></i> Accetta e Pubblica
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <head th:insert="~{index :: footer}"></head>
+    <div th:insert="~{index :: footer}"></div>
     <script th:replace="~{index :: bootstrapScript}"></script>
     <script>
-        function goBack() {
-            window.history.back();
-        }
+      function goBack() {
+        window.history.back();
+      }
     </script>
-</body>
-
+  </body>
 </html>
