@@ -36,7 +36,7 @@ public class CategoryController {
     private ModelMapper modelMapper;
 
     // Rotta per la ricerca degli articoli in base alla categoria
-    @GetMapping("/searc/{id}")
+    @GetMapping("/search/{id}")
     public String categorySearch(@PathVariable Long id, Model viewModel) {
         CategoryDto category = categoryService.read(id);
         viewModel.addAttribute("title",

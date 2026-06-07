@@ -13,6 +13,6 @@ public class GlobalExceptionHandler {
             RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("errorMessage",
                 "File troppo grande! La dimensione massima consentita è 10MB per file");
-        return "redirect:/article/create";
+        return "redirect:/articles/create";
     }
 }
