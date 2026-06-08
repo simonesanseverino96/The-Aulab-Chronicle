@@ -64,9 +64,10 @@ public class CareerRequestServiceImpl implements CareerRequestService {
         User user = request.getUser();
         Role role = request.getRole();
 
-        // Recupera tutti i ruoli già posseduti ed aggiunge quello nuovo
-        List<Role> newRoles = user.getRoles();
+        // Sostituisce tutti i ruoli con solo quello nuovo (un utente = un ruolo)
+        List<Role> newRoles = new java.util.ArrayList<>();
         newRoles.add(roleRepository.findByName(role.getName()));
+        user.setRoles(newRoles);
 
         // Salva tutte le nuove modifiche
         user.setRoles(newRoles);

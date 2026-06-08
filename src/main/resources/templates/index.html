@@ -92,6 +92,15 @@
                 </span>
               </a>
             </li>
+            <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+              <a
+                class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium custom-nav-link"
+                th:href="@{/admin/users}"
+              >
+                <i class="fa-solid fa-users-gear me-1 small"></i> Gestione
+                Utenti
+              </a>
+            </li>
 
             <li class="nav-item" sec:authorize="hasRole('ROLE_REVISOR')">
               <a

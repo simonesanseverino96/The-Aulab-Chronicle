@@ -95,8 +95,17 @@ public class ArticleController {
     }
 
     @GetMapping("revisor/detail/{id}")
-    public String revisorDetailArticle(@PathVariable Long id, Model viewModel) {
+    public String revisorDetailArticle(@PathVariable Long id, Model viewModel,
+            Principal principal, RedirectAttributes redirectAttributes) {
         ArticleDto articleDto = articleService.read(id);
+
+        // Blocca il revisore se l'articolo è suo
+        if (articleDto.getUser().getEmail().equals(principal.getName())) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Non puoi valutare un tuo articolo!");
+            return "redirect:/revisor/dashboard";
+        }
+
         viewModel.addAttribute("title", articleDto.getTitle());
         viewModel.addAttribute("article", articleDto);
         return "revisor/detail";
@@ -105,7 +114,18 @@ public class ArticleController {
     @PostMapping("/accept")
     public String articleSetAccepted(@RequestParam("action") String action,
             @RequestParam("articleId") Long articleId,
+            Principal principal,
             RedirectAttributes redirectAttributes) {
+
+        ArticleDto articleDto = articleService.read(articleId);
+
+        // Blocca il revisore se l'articolo è suo
+        if (articleDto.getUser().getEmail().equals(principal.getName())) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Non puoi valutare un tuo articolo!");
+            return "redirect:/revisor/dashboard";
+        }
+
         if (action.equals("accept")) {
             articleService.setIsAccepted(true, articleId);
             redirectAttributes.addFlashAttribute("resultMessage", "Articolo accettato!");

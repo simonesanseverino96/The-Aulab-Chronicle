@@ -1,0 +1,82 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
+>
+  <head th:insert="~{index :: head}"></head>
+  <body>
+    <div th:insert="~{index :: navbar}"></div>
+
+    <div class="container my-5">
+      <div class="dashboard-header mb-4">
+        <h1 class="fw-bold">
+          <i class="fa-solid fa-users-gear me-2"></i>Gestione Utenti
+        </h1>
+        <p class="lead opacity-75">
+          Assegna o rimuovi ruoli agli utenti registrati
+        </p>
+      </div>
+
+      <div th:if="${successMessage}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check me-2"></i>
+        <span th:text="${successMessage}"></span>
+      </div>
+
+      <div class="table-responsive shadow-sm rounded overflow-hidden">
+        <table class="table table-striped align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="ps-3">ID</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Ruolo attuale</th>
+              <th class="text-end pe-4">Cambia ruolo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="user : ${users}">
+              <td class="ps-3 fw-bold" th:text="${user.id}"></td>
+              <td th:text="${user.username}"></td>
+              <td class="text-muted small" th:text="${user.email}"></td>
+              <td>
+                <span
+                  th:each="role : ${user.roles}"
+                  class="badge bg-secondary text-capitalize"
+                  th:text="${role.name.replace('ROLE_', '')}"
+                >
+                </span>
+              </td>
+              <td class="text-end pe-3">
+                <form
+                  th:action="@{/admin/users/{id}/role(id=${user.id})}"
+                  method="post"
+                  class="d-flex gap-2 justify-content-end"
+                >
+                  <select
+                    name="roleId"
+                    class="form-select form-select-sm"
+                    style="width: auto"
+                  >
+                    <option
+                      th:each="role : ${roles}"
+                      th:value="${role.id}"
+                      th:text="${role.name.replace('ROLE_', '')}"
+                      th:selected="${user.roles.contains(role)}"
+                    ></option>
+                  </select>
+                  <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div th:insert="~{index :: footer}"></div>
+    <script th:replace="~{index :: bootstrapScript}"></script>
+  </body>
+</html>
