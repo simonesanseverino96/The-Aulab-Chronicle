@@ -7,12 +7,6 @@
 
     <div class="container my-5 pb-5">
       <div class="article-detail-header">
-        <span
-          class="badge bg-primary mb-3"
-          th:if="${article.category != null}"
-          th:text="${article.category.name}"
-        >
-        </span>
         <h1 class="display-4 fw-bold" th:text="${article.title}">Titolo</h1>
         <p class="lead fst-italic mt-2" th:text="${article.subtitle}">
           Sottotitolo

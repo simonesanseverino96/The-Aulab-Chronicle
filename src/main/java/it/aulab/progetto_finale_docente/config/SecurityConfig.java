@@ -40,12 +40,12 @@ public class SecurityConfig {
                                                 .hasRole("WRITER")
                                                 .requestMatchers("/register/**", "/", "/login",
                                                                 "/images/**", "/articles/detail/**",
-                                                                "/categories/search/**", "/search/**",
+                                                                "/search/**",
                                                                 "/css/**")
                                                 .permitAll()
 
                                                 .requestMatchers("/articles", "/operations/career/**", 
-                                                                "/articles/search")
+                                                                "/articles/search", "/categories/search/**")
                                                 .authenticated()
 
                                                 .anyRequest().authenticated())
