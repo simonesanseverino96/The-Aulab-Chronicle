@@ -63,7 +63,7 @@ public class OperationController {
 
         if (careerRequestService.isRoleAlreadyAssigned(user, careerRequest)) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Hai già inviato una richiesta per questo ruolo");
+                    "Hai già assegnato questo ruolo");
             return "redirect:/";
         }
 
@@ -86,6 +86,15 @@ public class OperationController {
         careerRequestService.careerAccept(id);
         redirectAttributes.addFlashAttribute("successMessage",
                 "Ruolo abilitato per l'utente");
+        return "redirect:/admin/dashboard";
+    }
+    
+    @PostMapping("/career/request/reject/{id}")
+    public String careerRequestReject(@PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+        careerRequestService.careerReject(id);
+        redirectAttributes.addFlashAttribute("deniedMessage",
+                "Ruolo non abilitato per l'utente");
         return "redirect:/admin/dashboard";
     }
 }

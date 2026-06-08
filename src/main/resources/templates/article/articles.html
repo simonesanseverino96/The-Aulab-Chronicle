@@ -29,7 +29,9 @@
             style="height: 250px; overflow: hidden;">
             <img
               th:src="${#lists.isEmpty(article.images)} ? '/images/default.jpg' : ${article.images.^[primary == true]?.path ?: article.images[0].path}"
-              class="w-100 h-100" alt="Immagine articolo" style="object-fit: contain;" />
+              class="card-img-top object-fit-contain"
+              alt="Immagine articolo"
+            />
 
             <span th:if="${article.category != null}">
               <a th:href="@{/categories/search/{id}(id=${article.category.id})}"

@@ -11,6 +11,13 @@
       </div>
     </div>
 
+    <div class="container mt-4" th:if="${deniedMessage}">
+      <div class="alert alert-danger shadow-sm" role="alert">
+        <i class="fa-solid fa-circle-xmark me-2"></i>
+        <span th:text="${deniedMessage}">Messaggio negato</span>
+      </div>
+    </div>
+
     <div class="container my-5 min-vh-100 pb-5">
       <div class="row">
         
@@ -47,7 +54,7 @@
                   <td class="fw-bold ps-3" th:text="${request.id}"></td>
                   <td th:text="${request.user.username}"></td>
                   <td>
-                    <span class="badge bg-info text-dark text-capitalize px-2 py-1" th:text="${request.role.name}"></span>
+                    <span class="badge bg-info-new text-white-emphasis text-capitalize px-2 py-1" th:text="${request.role.name}"></span>
                   </td>
                   <td class="text-center">
                     <a th:href="@{/operations/career/request/detail/{id}(id=${request.id})}" 

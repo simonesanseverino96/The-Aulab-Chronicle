@@ -652,4 +652,11 @@ footer a:hover {
 
 /*-------------create-images---------fine------------*/
 
+/* --- CAREER REQUEST DETAIL --- */
+.text-primary-emphasis {
+  color: var(--accent-color) !important;
+}
 
+.bg-info-new {
+  background-color: var(--accent-color) !important;
+}

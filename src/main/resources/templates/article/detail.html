@@ -38,24 +38,36 @@
     </div>
   </div>
 
-  <div class="container my-5 pb-5">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-8">
+    <div class="container my-5 pb-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+          <div class="mb-5">
+            <div class="text-center mb-3">
+              <img
+                th:src="${#lists.isEmpty(article.images)} ? '/images/default.jpg' : ${article.images.^[primary == true]?.path ?: article.images[0].path}"
+                class="rounded shadow img-fluid w-100 object-fit-contain"
+                alt="Immagine articolo"
+                style="max-height: 500px"
+                id="current-main-image"
+              />
+            </div>
 
-        <div class="mb-5">
-          <div class="text-center mb-3">
-            <img
-              th:src="${#lists.isEmpty(article.images)} ? '/images/default.jpg' : ${article.images.^[primary == true]?.path ?: article.images[0].path}"
-              class="rounded shadow img-fluid w-100 h-auto" alt="Immagine articolo" id="current-main-image" />
-          </div>
-
-          <div class="row g-2 justify-content-center"
-            th:if="${article.images != null and #lists.size(article.images) > 1}">
-            <div class="col-3 col-sm-2" th:each="img : ${article.images}">
-              <div class="ratio ratio-4x3 border rounded overflow-hidden shadow-sm thumbnail-box"
-                style="cursor: pointer">
-                <img th:src="${img.path}" class="object-fit-cover w-100 h-100" alt="Miniatura"
-                  onclick="switchMainImage(this.src)" />
+            <div
+              class="row g-2 justify-content-center"
+              th:if="${article.images != null and #lists.size(article.images) > 1}"
+            >
+              <div class="col-3 col-sm-2" th:each="img : ${article.images}">
+                <div
+                  class="ratio ratio-4x3 border rounded overflow-hidden shadow-sm thumbnail-box"
+                  style="cursor: pointer"
+                >
+                  <img
+                    th:src="${img.path}"
+                    class="object-fit-contain w-100 h-100"
+                    alt="Miniatura"
+                    onclick="switchMainImage(this.src)"
+                  />
+                </div>
               </div>
             </div>
           </div>

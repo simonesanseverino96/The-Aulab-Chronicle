@@ -11,6 +11,8 @@ public interface CareerRequestService {
 
     void careerAccept(Long requestId);
 
+    void careerReject(Long requestId);
+
     CareerRequest find(Long id);
 
 }

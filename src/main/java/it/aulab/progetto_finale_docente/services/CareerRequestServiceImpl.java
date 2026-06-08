@@ -83,7 +83,27 @@ public class CareerRequestServiceImpl implements CareerRequestService {
     }
 
     @Override
+    public void careerReject(Long requestId) {
+        // Recupera la richiesta
+        CareerRequest request = careerRequestRepository.findById(requestId).get();
+
+        // Recupera l'utente e il ruolo dalla richiesta
+        User user = request.getUser();
+
+        // Salva tutte le attuali modifiche della richiesta
+        request.setIsChecked(true);
+        careerRequestRepository.save(request);
+
+        // Invia email di Rifiuto all'utente
+        emailService.sendSimpleEmail(
+                user.getEmail(),
+                "Ruolo non abilitato",
+                "Ciao, la tua richiesta di collaborazione è stata rifiutata dalla nostra amministrazione");
+    }
+
+    @Override
     public CareerRequest find(Long id) {
         return careerRequestRepository.findById(id).get();
     }
+
 }
