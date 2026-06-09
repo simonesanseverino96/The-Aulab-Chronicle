@@ -53,9 +53,17 @@ public class OperationController {
 
         User user = userRepository.findByEmail(principal.getName());
 
+        // Blocca se l'utente ha già quel ruolo assegnato
+        if (user.getRoles().stream()
+                .anyMatch(r -> r.getName().equals(careerRequest.getRole().getName()))) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Hai già questo ruolo assegnato!");
+            return "redirect:/";
+        }
+
         if (careerRequestService.isRoleAlreadyAssigned(user, careerRequest)) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "Hai già assegnato a questo ruolo");
+                    "Hai già inviato una richiesta per questo ruolo");
             return "redirect:/";
         }
 
