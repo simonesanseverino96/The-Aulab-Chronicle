@@ -41,13 +41,13 @@ public class SecurityConfig {
                                                 .hasRole("WRITER")
                                                 .requestMatchers("/register/**", "/", "/login",
                                                                 "/images/**", "/articles/detail/**",
-                                                                "/search/**",
-                                                                "/css/**")
+                                                                "/search/**", "/css/**",
+                                                                "/forgot-password", "/reset-password")
                                                 .permitAll()
 
                                                 .requestMatchers("/articles", "/operations/career/**",
                                                                 "/articles/search", "/categories/search/**",
-                                                                "/profile/**", "/forgot-password", "/reset-password")
+                                                                "/profile/**")
                                                 .authenticated()
 
                                                 .anyRequest().authenticated())
