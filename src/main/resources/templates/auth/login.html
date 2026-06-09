@@ -1,86 +1,90 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head th:insert="~{index :: head}"></head>
-  <body>
-    <div th:insert="~{index :: navbar}"></div>
 
-    <div class="container my-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-5">
-          <!-- Card form -->
-          <div class="form-card">
-            <!-- Titolo -->
-            <div class="text-center mb-4">
-              <i
-                class="fa-solid fa-right-to-bracket fa-3x text-primary mb-3"
-              ></i>
-              <h2 class="fw-bold">Accedi</h2>
-              <p class="text-muted">Benvenuto! Inserisci le tue credenziali</p>
+<head th:insert="~{index :: head}"></head>
+
+<body>
+  <div th:insert="~{index :: navbar}"></div>
+
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-5">
+        <div class="form-card">
+
+          <div class="text-center mb-4">
+            <i class="fa-solid fa-right-to-bracket fa-3x text-primary mb-3"></i>
+            <h2 class="fw-bold">Accedi</h2>
+            <p class="text-muted">Benvenuto! Inserisci le tue credenziali</p>
+          </div>
+
+          <div th:if="${param.error}" class="alert alert-danger">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            Email o password non validi!
+          </div>
+
+          <div th:if="${param.logout}" class="alert alert-success">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            Hai effettuato il logout con successo!
+          </div>
+
+          <form method="post" role="form" th:action="@{/login}" class="form-horizontal">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                <i class="fa-solid fa-envelope me-1"></i>Email
+              </label>
+              <input type="text" id="username" name="username" class="form-control"
+                placeholder="Inserisci la tua email" />
             </div>
 
-            <!-- Alert errore -->
-            <div th:if="${param.error}" class="alert alert-danger">
-              <i class="fa-solid fa-triangle-exclamation me-2"></i>
-              Email o password non validi!
-            </div>
-
-            <!-- Alert logout -->
-            <div th:if="${param.logout}" class="alert alert-success">
-              <i class="fa-solid fa-circle-check me-2"></i>
-              Hai effettuato il logout con successo!
-            </div>
-
-            <form
-              method="post"
-              role="form"
-              th:action="@{/login}"
-              class="form-horizontal"
-            >
-              <div class="mb-3">
-                <label class="form-label fw-semibold">
-                  <i class="fa-solid fa-envelope me-1"></i>Email
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  class="form-control"
-                  placeholder="Inserisci la tua email"
-                />
-              </div>
-
-              <div class="mb-4">
-                <label class="form-label fw-semibold">
-                  <i class="fa-solid fa-lock me-1"></i>Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  class="form-control"
-                  placeholder="Inserisci la password"
-                />
-              </div>
-
-              <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-primary btn-lg">
-                  <i class="fa-solid fa-right-to-bracket me-2"></i>Accedi
+            <div class="mb-4">
+              <label class="form-label fw-semibold">
+                <i class="fa-solid fa-lock me-1"></i>Password
+              </label>
+              <div class="input-group">
+                <input type="password" id="password" name="password" class="form-control"
+                  placeholder="Inserisci la password" />
+                <button class="btn btn-outline-secondary border" type="button"
+                  onclick="togglePassword('password', this)">
+                  <i class="fa-solid fa-eye"></i>
                 </button>
               </div>
+            </div>
 
-              <div class="text-center text-muted">
-                Non sei registrato?
-                <a th:href="@{/register}" class="text-primary fw-semibold">
-                  Registrati qui
-                </a>
-              </div>
-            </form>
-          </div>
+            <div class="d-grid mb-3">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fa-solid fa-right-to-bracket me-2"></i>Accedi
+              </button>
+            </div>
+
+            <div class="text-center text-muted">
+              Non sei registrato?
+              <a th:href="@{/register}" class="text-primary fw-semibold">
+                Registrati qui
+              </a>
+            </div>
+          </form>
         </div>
       </div>
     </div>
+  </div>
 
-    <div th:insert="~{index :: footer}"></div>
-    <script th:replace="~{index :: bootstrapScript}"></script>
-  </body>
+  <div th:insert="~{index :: footer}"></div>
+
+  <script th:replace="~{index :: bootstrapScript}"></script>
+
+  <script>
+    function togglePassword(fieldId, btn) {
+      const input = document.getElementById(fieldId);
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+  </script>
+</body>
+
 </html>
