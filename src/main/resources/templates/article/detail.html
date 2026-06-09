@@ -1,110 +1,93 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head th:insert="~{index :: head}"></head>
 
-  <body>
-    <div th:insert="~{index :: navbar}"></div>
+<head th:insert="~{index :: head}"></head>
 
-    <div class="container my-5 pb-5">
-      <div class="article-detail-header">
-        <h1 class="display-4 fw-bold" th:text="${article.title}">Titolo</h1>
-        <p class="lead fst-italic mt-2" th:text="${article.subtitle}">
-          Sottotitolo
-        </p>
-        <div class="d-flex justify-content-center gap-4 mt-3">
-          <span sec:authorize="isAuthenticated()">
-            <i class="fa-solid fa-user me-1"></i>
-            <a
-              th:href="@{/search/{id}(id=${article.user.id})}"
-              class="text-white fw-bold text-decoration-none"
-              th:text="${article.user.username}"
-              >Autore</a
-            >
-          </span>
+<body>
+  <div th:insert="~{index :: navbar}"></div>
 
-          <span sec:authorize="!isAuthenticated()" class="text-white-50">
-            <i class="fa-solid fa-lock me-1"></i>
-            <span class="fst-italic text-sm">Accedi per l'autore</span>
-          </span>
+  <div class="container my-5 pb-5">
+    <div class="article-detail-header">
+      <h1 class="display-4 fw-bold" th:text="${article.title}">Titolo</h1>
+      <p class="lead fst-italic mt-2" th:text="${article.subtitle}">
+        Sottotitolo
+      </p>
+      <div class="d-flex justify-content-center gap-4 mt-3">
+        <span sec:authorize="isAuthenticated()">
+          <i class="fa-solid fa-user me-1"></i>
+          <a th:href="@{/search/{id}(id=${article.user.id})}" class="text-white fw-bold text-decoration-none"
+            th:text="${article.user.username}">Autore</a>
+        </span>
 
-          <span th:if="${article.publishDate != null}">
-            <i class="fa-solid fa-calendar me-1"></i>
-            <span th:text="${article.publishDate}">Data</span>
-          </span>
+        <span sec:authorize="!isAuthenticated()" class="text-white-50">
+          <i class="fa-solid fa-lock me-1"></i>
+          <span class="fst-italic text-sm">Accedi per l'autore</span>
+        </span>
 
-          <span th:if="${article.category != null}">
-            <i class="fa-solid fa-tag me-1"></i>
-            <a
-              th:href="@{/categories/search/{id}(id=${article.category.id})}"
-              class="text-white text-decoration-none"
-              th:text="${article.category.name}"
-              >Categoria</a
-            >
-          </span>
-        </div>
+        <span th:if="${article.publishDate != null}">
+          <i class="fa-solid fa-calendar me-1"></i>
+          <span th:text="${article.publishDate}">Data</span>
+        </span>
+
+        <span th:if="${article.category != null}">
+          <i class="fa-solid fa-tag me-1"></i>
+          <a th:href="@{/categories/search/{id}(id=${article.category.id})}" class="text-white text-decoration-none"
+            th:text="${article.category.name}">Categoria</a>
+        </span>
       </div>
     </div>
+  </div>
 
-    <div class="container my-5 pb-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8">
-          <div class="mb-5">
-            <div class="text-center mb-3">
-              <img
-                th:src="${#lists.isEmpty(article.images)} ? '/images/default.jpg' : ${article.images.^[primary == true]?.path ?: article.images[0].path}"
-                class="rounded shadow img-fluid w-100 object-fit-cover"
-                alt="Immagine articolo"
-                style="max-height: 500px"
-                id="current-main-image"
-              />
-            </div>
+  <div class="container my-5 pb-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8">
 
-            <div
-              class="row g-2 justify-content-center"
-              th:if="${article.images != null and #lists.size(article.images) > 1}"
-            >
-              <div class="col-3 col-sm-2" th:each="img : ${article.images}">
-                <div
-                  class="ratio ratio-4x3 border rounded overflow-hidden shadow-sm thumbnail-box"
-                  style="cursor: pointer"
-                >
-                  <img
-                    th:src="${img.path}"
-                    class="object-fit-cover w-100 h-100"
-                    alt="Miniatura"
-                    onclick="switchMainImage(this.src)"
-                  />
-                </div>
+        <div class="mb-5">
+          <div class="text-center mb-3">
+            <img
+              th:src="${#lists.isEmpty(article.images)} ? '/images/default.jpg' : ${article.images.^[primary == true]?.path ?: article.images[0].path}"
+              class="rounded shadow img-fluid w-100 h-auto" alt="Immagine articolo" id="current-main-image" />
+          </div>
+
+          <div class="row g-2 justify-content-center"
+            th:if="${article.images != null and #lists.size(article.images) > 1}">
+            <div class="col-3 col-sm-2" th:each="img : ${article.images}">
+              <div class="ratio ratio-4x3 border rounded overflow-hidden shadow-sm thumbnail-box"
+                style="cursor: pointer">
+                <img th:src="${img.path}" class="object-fit-cover w-100 h-100" alt="Miniatura"
+                  onclick="switchMainImage(this.src)" />
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="article-detail-body mb-5" style="white-space: pre-line">
-            <p th:text="${article.body}">corpo dell'articolo...</p>
-          </div>
+        <div class="article-detail-body mb-5" style="white-space: pre-line">
+          <p th:text="${article.body}">corpo dell'articolo...</p>
+        </div>
 
-          <hr />
+        <hr />
 
-          <div class="text-center mt-4">
-            <button class="btn btn-outline-secondary btn-lg" onclick="goBack()">
-              <i class="fa-solid fa-arrow-left me-2"></i>Torna indietro
-            </button>
-          </div>
+        <div class="text-center mt-4">
+          <button class="btn btn-outline-secondary btn-lg" onclick="goBack()">
+            <i class="fa-solid fa-arrow-left me-2"></i>Torna indietro
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <div th:insert="~{index :: footer}"></div>
-    <script th:replace="~{index :: bootstrapScript}"></script>
+  <div th:insert="~{index :: footer}"></div>
+  <script th:replace="~{index :: bootstrapScript}"></script>
 
-    <script>
-      function goBack() {
-        window.history.back();
-      }
+  <script>
+    function goBack() {
+      window.history.back();
+    }
 
-      function switchMainImage(src) {
-        document.getElementById("current-main-image").src = src;
-      }
-    </script>
-  </body>
+    function switchMainImage(src) {
+      document.getElementById("current-main-image").src = src;
+    }
+  </script>
+</body>
+
 </html>
