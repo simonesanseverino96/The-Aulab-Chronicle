@@ -46,7 +46,8 @@ public class SecurityConfig {
                                                 .permitAll()
 
                                                 .requestMatchers("/articles", "/operations/career/**",
-                                                                "/articles/search", "/categories/search/**")
+                                                                "/articles/search", "/categories/search/**",
+                                                                "/profile/**", "/forgot-password", "/reset-password")
                                                 .authenticated()
 
                                                 .anyRequest().authenticated())

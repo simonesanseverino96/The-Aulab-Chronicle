@@ -31,7 +31,6 @@ import it.aulab.progetto_finale_docente.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class UserController {
@@ -211,7 +210,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public String profile(Model viewModel, Principal principal) {
-        User user = userService.findByEmail(principal.getName());
+        User user = userService.findUserByEmail(principal.getName());
         viewModel.addAttribute("title", "Il mio profilo");
         viewModel.addAttribute("user", user);
         return "user/profile";

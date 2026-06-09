@@ -1,226 +1,381 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
+>
+  <head th:fragment="head">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪶</text></svg>"
+    />
+    <title
+      th:text="${title} ? ${title} + ' | Aulab Chronicle' : 'Aulab Chronicle'"
+    >
+      Aulab Chronicle
+    </title>
+  </head>
 
-<head th:fragment="head">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪶</text></svg>" />
-  <title th:text="${title} ? ${title} + ' | Aulab Chronicle' : 'Aulab Chronicle'">
-    Aulab Chronicle
-  </title>
-</head>
+  <body>
+    <nav
+      th:fragment="navbar"
+      class="navbar navbar-expand-lg py-3 shadow-sm custom-navbar"
+    >
+      <div class="container-fluid">
+        <a
+          class="navbar-brand text-uppercase fw-bold tracking-wider text-white custom-brand"
+          th:href="@{/}"
+        >
+          <i class="fa-solid fa-feather-pointed me-2 custom-brand-icon"></i
+          >Aulab <span class="custom-brand-accent">Chronicle</span>
+        </a>
 
-<body>
-  <nav th:fragment="navbar" class="navbar navbar-expand-lg py-3 shadow-sm custom-navbar">
-    <div class="container-fluid">
-      <a class="navbar-brand text-uppercase fw-bold tracking-wider text-white custom-brand" th:href="@{/}">
-        <i class="fa-solid fa-feather-pointed me-2 custom-brand-icon"></i>Aulab <span
-          class="custom-brand-accent">Chronicle</span>
-      </a>
+        <button
+          class="navbar-toggler border-0 shadow-none text-white"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <i class="fa-solid fa-bars-staggered custom-toggler-icon"></i>
+        </button>
 
-      <button class="navbar-toggler border-0 shadow-none text-white" type="button" data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-        aria-label="Toggle navigation">
-        <i class="fa-solid fa-bars-staggered custom-toggler-icon"></i>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center gap-2">
-          <li class="nav-item">
-            <a class="nav-link text-white-50 px-3 py-2 rounded-3 text-decoration-none fw-medium custom-nav-link"
-              th:href="@{/articles}">
-              <i class="fa-regular fa-newspaper me-1 small"></i> Tutti gli
-              articoli
-            </a>
-          </li>
-
-          <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
-            <a class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium d-inline-flex align-items-center gap-2 custom-nav-link"
-              th:href="@{/admin/dashboard}">
-              <span>Dashboard Admin</span>
-              <span th:if="${careerRequests != null AND careerRequests > 0}" class="position-relative d-inline-block">
-                <i class="fas fa-bell text-warning animate-bounce custom-bell-icon"></i>
-                <span
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger custom-notification-badge"
-                  th:text="${careerRequests}"></span>
-              </span>
-            </a>
-          </li>
-          <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
-            <a class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium custom-nav-link" th:href="@{/admin/users}">
-              <i class="fa-solid fa-users-gear me-1 small"></i> Gestione
-              Utenti
-            </a>
-          </li>
-
-          <li class="nav-item" sec:authorize="hasRole('ROLE_REVISOR')">
-            <a class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium d-inline-flex align-items-center gap-2 custom-nav-link"
-              th:href="@{/revisor/dashboard}">
-              <span>Dashboard Revisor</span>
-              <span th:if="${articlesToBeRevised != null AND articlesToBeRevised > 0}"
-                class="position-relative d-inline-block">
-                <i class="fas fa-bell text-warning custom-bell-icon"></i>
-                <span
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger custom-notification-badge"
-                  th:text="${articlesToBeRevised}"></span>
-              </span>
-            </a>
-          </li>
-
-          <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_WRITER')">
-            <a class="nav-link dropdown-toggle text-white-50 px-3 py-2 rounded-3 fw-medium custom-dropdown-toggle"
-              href="#" id="writerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fa-solid fa-pen-fancy me-1 small"></i> Area Writer
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark border-0 shadow-lg p-2 custom-dropdown-menu"
-              aria-labelledby="writerDropdown">
-              <li>
-                <a class="dropdown-item rounded-2 py-2" th:href="@{/writer/dashboard}">
-                  <i class="fa-solid fa-chart-pie me-2 small custom-menu-icon"></i>La tua Dashboard
-                </a>
-              </li>
-              <li>
-                <hr class="dropdown-divider opacity-10" />
-              </li>
-              <li>
-                <a class="dropdown-item rounded-2 py-2" th:href="@{/articles/create}">
-                  <i class="fa-solid fa-circle-plus me-2 small custom-menu-icon"></i>Scrivi un Articolo
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-
-        <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3 ms-auto mt-3 mt-lg-0">
-          <form class="d-flex" th:action="@{/articles/search}" method="get">
-            <div class="input-group custom-search-group">
-              <input class="form-control form-control-sm border-0 text-white px-3 custom-search-input" type="search"
-                placeholder="Cerca articoli..." name="keyword" aria-label="Search" />
-              <button class="btn btn-sm border-0 text-white-50 px-3 custom-search-btn" type="submit">
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </button>
-            </div>
-          </form>
-
-          <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-white fw-medium d-flex align-items-center gap-1 px-2" href="#"
-                id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-regular fa-circle-user custom-user-icon"></i>
-                Account
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul
+            class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center gap-2"
+          >
+            <li class="nav-item">
+              <a
+                class="nav-link text-white-50 px-3 py-2 rounded-3 text-decoration-none fw-medium custom-nav-link"
+                th:href="@{/articles}"
+              >
+                <i class="fa-regular fa-newspaper me-1 small"></i> Tutti gli
+                articoli
               </a>
-              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark border-0 shadow-lg p-2 custom-dropdown-menu"
-                aria-labelledby="profileDropdown">
-                <li sec:authorize="isAnonymous()">
-                  <a class="dropdown-item rounded-2 py-2" th:href="@{/register}"><i
-                      class="fa-solid fa-user-plus me-2 text-muted small"></i>Registrati</a>
+            </li>
+
+            <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+              <a
+                class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium d-inline-flex align-items-center gap-2 custom-nav-link"
+                th:href="@{/admin/dashboard}"
+              >
+                <span>Dashboard Admin</span>
+                <span
+                  th:if="${careerRequests != null AND careerRequests > 0}"
+                  class="position-relative d-inline-block"
+                >
+                  <i
+                    class="fas fa-bell text-warning animate-bounce custom-bell-icon"
+                  ></i>
+                  <span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger custom-notification-badge"
+                    th:text="${careerRequests}"
+                  ></span>
+                </span>
+              </a>
+            </li>
+            <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+              <a
+                class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium custom-nav-link"
+                th:href="@{/admin/users}"
+              >
+                <i class="fa-solid fa-users-gear me-1 small"></i> Gestione
+                Utenti
+              </a>
+            </li>
+
+            <li class="nav-item" sec:authorize="hasRole('ROLE_REVISOR')">
+              <a
+                class="nav-link text-white-50 px-3 py-2 rounded-3 fw-medium d-inline-flex align-items-center gap-2 custom-nav-link"
+                th:href="@{/revisor/dashboard}"
+              >
+                <span>Dashboard Revisor</span>
+                <span
+                  th:if="${articlesToBeRevised != null AND articlesToBeRevised > 0}"
+                  class="position-relative d-inline-block"
+                >
+                  <i class="fas fa-bell text-warning custom-bell-icon"></i>
+                  <span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger custom-notification-badge"
+                    th:text="${articlesToBeRevised}"
+                  ></span>
+                </span>
+              </a>
+            </li>
+
+            <li
+              class="nav-item dropdown"
+              sec:authorize="hasRole('ROLE_WRITER')"
+            >
+              <a
+                class="nav-link dropdown-toggle text-white-50 px-3 py-2 rounded-3 fw-medium custom-dropdown-toggle"
+                href="#"
+                id="writerDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fa-solid fa-pen-fancy me-1 small"></i> Area Writer
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-dark border-0 shadow-lg p-2 custom-dropdown-menu"
+                aria-labelledby="writerDropdown"
+              >
+                <li>
+                  <a
+                    class="dropdown-item rounded-2 py-2"
+                    th:href="@{/writer/dashboard}"
+                  >
+                    <i
+                      class="fa-solid fa-chart-pie me-2 small custom-menu-icon"
+                    ></i
+                    >La tua Dashboard
+                  </a>
                 </li>
-                <li sec:authorize="isAnonymous()">
-                  <a class="dropdown-item rounded-2 py-2" th:href="@{/login}"><i
-                      class="fa-solid fa-right-to-bracket me-2 text-muted small"></i>Accedi</a>
+                <li>
+                  <hr class="dropdown-divider opacity-10" />
                 </li>
-                <li sec:authorize="isAuthenticated()">
-                  <a class="dropdown-item rounded-2 py-2 text-danger fw-medium" th:href="@{/logout}"><i
-                      class="fa-solid fa-power-off me-2 small"></i>Disconnetti</a>
+                <li>
+                  <a
+                    class="dropdown-item rounded-2 py-2"
+                    th:href="@{/articles/create}"
+                  >
+                    <i
+                      class="fa-solid fa-circle-plus me-2 small custom-menu-icon"
+                    ></i
+                    >Scrivi un Articolo
+                  </a>
                 </li>
               </ul>
             </li>
           </ul>
 
-          <div sec:authorize="isAuthenticated()"
-            class="navbar-text text-white d-flex align-items-center gap-2 px-3 py-1.5 custom-user-badge">
-            <span class="fw-semibold text-white-50">
-              <i class="fa-solid fa-circle text-success me-1 custom-live-dot"></i>
-              <span th:text="${#authentication.principal.fullname}">Utente</span>
-            </span>
-            <th:block th:with="
-              isAdmin=${#authorization.expression('hasAuthority(''ROLE_ADMIN'')')},
-              isRevisor=${#authorization.expression('hasAuthority(''ROLE_REVISOR'')')},
-              isWriter=${#authorization.expression('hasAuthority(''ROLE_WRITER'')')}
-              ">
-              <span th:if="${isAdmin}" class="badge text-uppercase tracking-wide custom-role-badge">ADMIN</span>
+          <div
+            class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3 ms-auto mt-3 mt-lg-0"
+          >
+            <form class="d-flex" th:action="@{/articles/search}" method="get">
+              <div class="input-group custom-search-group">
+                <input
+                  class="form-control form-control-sm border-0 text-white px-3 custom-search-input"
+                  type="search"
+                  placeholder="Cerca articoli..."
+                  name="keyword"
+                  aria-label="Search"
+                />
+                <button
+                  class="btn btn-sm border-0 text-white-50 px-3 custom-search-btn"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </div>
+            </form>
 
-              <span th:if="${!isAdmin and isRevisor}"
-                class="badge text-uppercase tracking-wide custom-role-badge">REVISOR</span>
+            <ul class="navbar-nav">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle text-white fw-medium d-flex align-items-center gap-1 px-2"
+                  href="#"
+                  id="profileDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i class="fa-regular fa-circle-user custom-user-icon"></i>
+                  Account
+                </a>
+                <ul
+                  class="dropdown-menu dropdown-menu-end dropdown-menu-dark border-0 shadow-lg p-2 custom-dropdown-menu"
+                  aria-labelledby="profileDropdown"
+                >
+                  <li sec:authorize="isAnonymous()">
+                    <a
+                      class="dropdown-item rounded-2 py-2"
+                      th:href="@{/register}"
+                      ><i
+                        class="fa-solid fa-user-plus me-2 text-muted small"
+                      ></i
+                      >Registrati</a
+                    >
+                  </li>
+                  <li sec:authorize="isAnonymous()">
+                    <a class="dropdown-item rounded-2 py-2" th:href="@{/login}"
+                      ><i
+                        class="fa-solid fa-right-to-bracket me-2 text-muted small"
+                      ></i
+                      >Accedi</a
+                    >
+                  </li>
+                  <li sec:authorize="isAuthenticated()">
+                    <a
+                      class="dropdown-item rounded-2 py-2"
+                      th:href="@{/profile}"
+                    >
+                      <i class="fa-solid fa-user-gear me-2 text-muted small"></i
+                      >Il mio profilo
+                    </a>
+                  </li>
+                  <li sec:authorize="isAuthenticated()">
+                    <a
+                      class="dropdown-item rounded-2 py-2 text-danger fw-medium"
+                      th:href="@{/logout}"
+                      ><i class="fa-solid fa-power-off me-2 small"></i
+                      >Disconnetti</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
 
-              <span th:if="${!isAdmin and !isRevisor and isWriter}"
-                class="badge text-uppercase tracking-wide custom-role-badge">WRITER</span>
+            <div
+              sec:authorize="isAuthenticated()"
+              class="navbar-text text-white d-flex align-items-center gap-2 px-3 py-1.5 custom-user-badge"
+            >
+              <span class="fw-semibold text-white-50">
+                <i
+                  class="fa-solid fa-circle text-success me-1 custom-live-dot"
+                ></i>
+                <span th:text="${#authentication.principal.fullname}"
+                  >Utente</span
+                >
+              </span>
+              <th:block
+                th:with="
+isAdmin=${#authorization.expression('hasAuthority(''ROLE_ADMIN'')')},
+isRevisor=${#authorization.expression('hasAuthority(''ROLE_REVISOR'')')},
+isWriter=${#authorization.expression('hasAuthority(''ROLE_WRITER'')')}
+"
+              >
+                <span
+                  th:if="${isAdmin}"
+                  class="badge text-uppercase tracking-wide custom-role-badge"
+                  >ADMIN</span
+                >
 
-              <span th:if="${!isAdmin and !isRevisor and !isWriter}"
-                class="badge text-uppercase tracking-wide custom-role-badge">USER</span>
-            </th:block>
+                <span
+                  th:if="${!isAdmin and isRevisor}"
+                  class="badge text-uppercase tracking-wide custom-role-badge"
+                  >REVISOR</span
+                >
+
+                <span
+                  th:if="${!isAdmin and !isRevisor and isWriter}"
+                  class="badge text-uppercase tracking-wide custom-role-badge"
+                  >WRITER</span
+                >
+
+                <span
+                  th:if="${!isAdmin and !isRevisor and !isWriter}"
+                  class="badge text-uppercase tracking-wide custom-role-badge"
+                  >USER</span
+                >
+              </th:block>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <footer th:fragment="footer" class="text-white pt-5 mt-auto custom-footer">
-    <div class="container">
-      <div class="row justify-content-between align-items-center mb-4">
-        <div class="col-md-4 mb-3 mb-md-0">
-          <a th:href="@{/}" class="text-decoration-none text-white fs-4 fw-bold tracking-wider custom-footer-brand">
-            <i class="fa-solid fa-feather-pointed me-2 custom-brand-icon"></i>Aulab <span
-              class="custom-brand-accent-footer">Chronicle</span>
-          </a>
-          <p class="text-white-50 small mt-2 mb-0">
-            Il portale delle notizie e degli approfondimenti firmato Aulab.
-          </p>
-        </div>
-
-        <div class="col-md-4 text-md-end">
-          <h5 class="fw-semibold mb-2 custom-footer-heading">
-            Vuoi unirti alla redazione?
-          </h5>
-          <a th:href="@{/operations/career/request}"
-            class="btn btn-sm px-4 py-2 rounded-pill fw-medium text-decoration-none d-inline-flex align-items-center gap-2 custom-career-btn">
-            <i class="fa-solid fa-briefcase small"></i> Lavora con noi
-          </a>
-        </div>
-      </div>
-
-      <hr class="opacity-10 my-4" />
-
-      <div class="row pb-4 align-items-center">
-        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-          <p class="mb-0 text-white-50 small">
-            © 2026 Aulab Chronicle. Tutti i diritti riservati.
-          </p>
-        </div>
-
-        <div class="col-md-6 text-center text-md-end">
-          <div class="d-inline-flex gap-3 fs-5 custom-social-links">
-            <a href="https://facebook.com" target="_blank"
-              class="text-white-50 text-decoration-none transition-all hover-white" title="Seguici su Facebook">
-              <i class="fa-brands fa-facebook"></i>
+    <footer th:fragment="footer" class="text-white pt-5 mt-auto custom-footer">
+      <div class="container">
+        <div class="row justify-content-between align-items-center mb-4">
+          <div class="col-md-4 mb-3 mb-md-0">
+            <a
+              th:href="@{/}"
+              class="text-decoration-none text-white fs-4 fw-bold tracking-wider custom-footer-brand"
+            >
+              <i class="fa-solid fa-feather-pointed me-2 custom-brand-icon"></i
+              >Aulab <span class="custom-brand-accent-footer">Chronicle</span>
             </a>
-            <a href="https://instagram.com" target="_blank"
-              class="text-white-50 text-decoration-none transition-all hover-white" title="Seguici su Instagram">
-              <i class="fa-brands fa-instagram"></i>
-            </a>
-            <a href="https://linkedin.com" target="_blank"
-              class="text-white-50 text-decoration-none transition-all hover-white" title="Seguici su LinkedIn">
-              <i class="fa-brands fa-linkedin"></i>
-            </a>
-            <a href="https://github.com" target="_blank"
-              class="text-white-50 text-decoration-none transition-all hover-white" title="Il nostro codice su GitHub">
-              <i class="fa-brands fa-github"></i>
+            <p class="text-white-50 small mt-2 mb-0">
+              Il portale delle notizie e degli approfondimenti firmato Aulab.
+            </p>
+          </div>
+
+          <div class="col-md-4 text-md-end">
+            <h5 class="fw-semibold mb-2 custom-footer-heading">
+              Vuoi unirti alla redazione?
+            </h5>
+            <a
+              th:href="@{/operations/career/request}"
+              class="btn btn-sm px-4 py-2 rounded-pill fw-medium text-decoration-none d-inline-flex align-items-center gap-2 custom-career-btn"
+            >
+              <i class="fa-solid fa-briefcase small"></i> Lavora con noi
             </a>
           </div>
         </div>
+
+        <hr class="opacity-10 my-4" />
+
+        <div class="row pb-4 align-items-center">
+          <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+            <p class="mb-0 text-white-50 small">
+              © 2026 Aulab Chronicle. Tutti i diritti riservati.
+            </p>
+          </div>
+
+          <div class="col-md-6 text-center text-md-end">
+            <div class="d-inline-flex gap-3 fs-5 custom-social-links">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                class="text-white-50 text-decoration-none transition-all hover-white"
+                title="Seguici su Facebook"
+              >
+                <i class="fa-brands fa-facebook"></i>
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                class="text-white-50 text-decoration-none transition-all hover-white"
+                title="Seguici su Instagram"
+              >
+                <i class="fa-brands fa-instagram"></i>
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                class="text-white-50 text-decoration-none transition-all hover-white"
+                title="Seguici su LinkedIn"
+              >
+                <i class="fa-brands fa-linkedin"></i>
+              </a>
+              <a
+                href="https://github.com"
+                target="_blank"
+                class="text-white-50 text-decoration-none transition-all hover-white"
+                title="Il nostro codice su GitHub"
+              >
+                <i class="fa-brands fa-github"></i>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
 
-  <script th:fragment="bootstrapScript"
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-</body>
-
+    <script
+      th:fragment="bootstrapScript"
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
