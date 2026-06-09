@@ -8,4 +8,6 @@ import it.aulab.progetto_finale_docente.models.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
+
+    User findByResetToken(String token);
 }

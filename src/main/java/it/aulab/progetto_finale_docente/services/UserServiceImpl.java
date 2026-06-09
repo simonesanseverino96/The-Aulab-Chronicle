@@ -1,5 +1,6 @@
 package it.aulab.progetto_finale_docente.services;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private EmailService emailService;
 
     // Iniezione tramite costruttore (best practice)
     public UserServiceImpl(UserRepository userRepository,
@@ -102,4 +106,57 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void updateProfile(Long id, String gender, LocalDate birthDate) {
+        User user = userRepository.findById(id).get();
+        user.setGender(gender);
+        user.setBirthDate(birthDate);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void changePassword(Long id, String currentPassword, String newPassword) throws Exception {
+        User user = userRepository.findById(id).get();
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new Exception("Password corrente non corretta.");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteAccount(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public void sendPasswordResetEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null)
+            return;
+
+        String token = java.util.UUID.randomUUID().toString();
+        user.setResetToken(token);
+        user.setResetTokenExpiry(LocalDate.now().plusDays(1));
+        userRepository.save(user);
+
+        emailService.sendSimpleEmail(
+                email,
+                "Reset password - Aulab Chronicle",
+                "Clicca il link per resettare la password: http://localhost:8080/reset-password?token=" + token);
+    }
+
+    @Override
+    public void resetPassword(String token, String newPassword) throws Exception {
+        User user = userRepository.findByResetToken(token);
+        if (user == null || user.getResetTokenExpiry().isBefore(LocalDate.now())) {
+            throw new Exception("Token non valido o scaduto");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
+        userRepository.save(user);
+    }
+
 }

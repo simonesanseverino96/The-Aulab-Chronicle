@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,26 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = true)
+    private String gender; // "M", "F", "Altro"
+
+    @Column(nullable = true)
+    private LocalDate birthDate;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDate createdAt;
+
+    @Column(nullable = true)
+    private String resetToken;
+
+    @Column(nullable = true)
+    private LocalDate resetTokenExpiry;
+
+    @jakarta.persistence.PrePersist
+    public void prePersist() {
+        createdAt = LocalDate.now();
+    }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles", joinColumns = {

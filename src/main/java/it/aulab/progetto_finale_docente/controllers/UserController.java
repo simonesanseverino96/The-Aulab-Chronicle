@@ -31,6 +31,7 @@ import it.aulab.progetto_finale_docente.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class UserController {
@@ -206,6 +207,89 @@ public class UserController {
                 .toList();
         viewModel.addAttribute("articles", userArticles);
         return "writer/dashboard";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Model viewModel, Principal principal) {
+        User user = userService.findByEmail(principal.getName());
+        viewModel.addAttribute("title", "Il mio profilo");
+        viewModel.addAttribute("user", user);
+        return "user/profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String profileUpdate(@RequestParam(required = false) String gender,
+            @RequestParam(required = false) String birthDate, Principal principal,
+            RedirectAttributes redirectAttributes) {
+        User user = userService.findUserByEmail(principal.getName());
+        java.time.LocalDate bd = (birthDate != null && !birthDate.isEmpty())
+                ? java.time.LocalDate.parse(birthDate)
+                : null;
+        userService.updateProfile(user.getId(), gender, bd);
+        redirectAttributes.addFlashAttribute("successMessage", "Profilo aggiornato!");
+        return "redirect:/profile";
+    }
+
+    @PostMapping("/profile/change-password")
+    public String changePassword(@RequestParam String currentPassword,
+            @RequestParam String newPassword,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+        User user = userService.findUserByEmail(principal.getName());
+        try {
+            userService.changePassword(user.getId(), currentPassword, newPassword);
+            redirectAttributes.addFlashAttribute("successMessage", "Password cambiata con successo!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/profile";
+    }
+
+    @GetMapping("/forgot-password")
+    public String forgotPassword(Model viewModel) {
+        viewModel.addAttribute("title", "Reset password");
+        return "auth/forgot-password";
+    }
+
+    @PostMapping("/forgot-password")
+    public String forgotPasswordSend(@RequestParam String email,
+            RedirectAttributes redirectAttributes) {
+        userService.sendPasswordResetEmail(email);
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Se l'email esiste riceverai le istruzioni per il reset!");
+        return "redirect:/forgot-password";
+    }
+
+    @GetMapping("/reset-password")
+    public String resetPassword(@RequestParam String token, Model viewModel) {
+        viewModel.addAttribute("title", "Nuova password");
+        viewModel.addAttribute("token", token);
+        return "auth/reset-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPasswordSave(@RequestParam String token,
+            @RequestParam String newPassword,
+            RedirectAttributes redirectAttributes) {
+        try {
+            userService.resetPassword(token, newPassword);
+            redirectAttributes.addFlashAttribute("successMessage", "Password resettata! Accedi con la nuova password.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/reset-password?token=" + token;
+        }
+    }
+
+    @PostMapping("/profile/delete")
+    public String deleteAccount(Principal principal,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
+        User user = userService.findUserByEmail(principal.getName());
+        userService.deleteAccount(user.getId());
+        request.getSession().invalidate();
+        redirectAttributes.addFlashAttribute("successMessage", "Account eliminato con successo.");
+        return "redirect:/";
     }
 
     @GetMapping("/error/403")
