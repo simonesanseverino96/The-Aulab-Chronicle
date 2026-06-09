@@ -140,10 +140,20 @@ public class UserController {
     }
 
     @GetMapping("/admin/users")
-    public String adminUsers(Model viewModel) {
+    public String adminUsers(Model viewModel, Principal principal) {
         viewModel.addAttribute("title", "Gestione Utenti");
-        viewModel.addAttribute("users", userRepository.findAll());
-        viewModel.addAttribute("roles", roleRepository.findAll());
+
+        List<User> users = userRepository.findAll()
+                .stream()
+                .filter(u -> u.getRoles().stream()
+                        .noneMatch(r -> r.getName().equals("ROLE_ADMIN")))
+                .collect(Collectors.toList());
+
+        viewModel.addAttribute("users", users);
+        viewModel.addAttribute("roles", roleRepository.findAll()
+                .stream()
+                .filter(r -> !r.getName().equals("ROLE_ADMIN"))
+                .collect(Collectors.toList()));
         return "admin/users";
     }
 
@@ -196,5 +206,11 @@ public class UserController {
                 .toList();
         viewModel.addAttribute("articles", userArticles);
         return "writer/dashboard";
+    }
+
+    @GetMapping("/error/403")
+    public String error403(Model viewModel) {
+        viewModel.addAttribute("title", "Accesso negato");
+        return "error/403";
     }
 }
