@@ -54,7 +54,7 @@
                   <td class="fw-bold ps-3" th:text="${request.id}"></td>
                   <td th:text="${request.user.username}"></td>
                   <td>
-                    <span class="badge bg-info-new text-white-emphasis text-capitalize px-2 py-1" th:text="${request.role.name}"></span>
+                    <span class="badge bg-info-new text-white-emphasis text-capitalize px-2 py-1" th:text="${request.role.name.replace('ROLE_', '')}"></span>
                   </td>
                   <td class="text-center">
                     <a th:href="@{/operations/career/request/detail/{id}(id=${request.id})}" 

@@ -36,7 +36,7 @@
           <!-- Ruolo richiesto -->
           <span 
           class="badge bg-info-new text-white-emphasis text-decoration-none text-uppercase"
-          th:text="${request.role.name}">
+          th:text="${request.role.name.replace('ROLE_', '')}">
           </span>
                   
 
