@@ -41,14 +41,11 @@ public class Article {
     @Size(max = 255)
     private String subtitle;
 
-    // Usiamo -columnDefinition = "TEXT" in MySQL non ha limite fisso (fino a 65.000
-    // caratteri)
     @Column(nullable = false, columnDefinition = "TEXT")
     @NotEmpty(message = "Il corpo dell''articolo non deve essere vuoto")
-
     private String body;
 
-    @Column(nullable = true)
+    @Column(name = "publish_date", nullable = true, updatable = false)
     private LocalDate publishDate;
 
     @Column(nullable = true)
@@ -68,7 +65,6 @@ public class Article {
     @JsonIgnoreProperties({ "article" })
     private java.util.List<Image> images = new java.util.ArrayList<>();
 
-    // Contatore visualizzazioni
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 
@@ -79,19 +75,18 @@ public class Article {
         if (obj == null || getClass() != obj.getClass())
             return false;
         Article article = (Article) obj;
-
+        
+        if (id != null && article.id != null) {
+            return Objects.equals(id, article.id);
+        }
+        
         return Objects.equals(title, article.title) &&
                 Objects.equals(subtitle, article.subtitle) &&
-                Objects.equals(body, article.body) &&
-                Objects.equals(publishDate, article.publishDate) &&
-                Objects.equals(category != null ? category.getName() : null,
-                        article.category != null ? article.category.getName() : null)
-                &&
-                Objects.equals(images, article.images); // Confronta la lista di immagini in sicurezza
+                Objects.equals(body, article.body);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, subtitle, body, publishDate);
+        return Objects.hash(id, title, subtitle, body);
     }
 }

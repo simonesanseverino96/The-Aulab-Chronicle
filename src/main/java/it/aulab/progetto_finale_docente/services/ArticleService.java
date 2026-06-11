@@ -2,6 +2,7 @@ package it.aulab.progetto_finale_docente.services;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -15,11 +16,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import it.aulab.progetto_finale_docente.dtos.ArticleDto;
 import it.aulab.progetto_finale_docente.models.Article;
 import it.aulab.progetto_finale_docente.models.User;
 import it.aulab.progetto_finale_docente.repositories.ArticleRepository;
 import it.aulab.progetto_finale_docente.repositories.UserRepository;
+import it.aulab.progetto_finale_docente.repositories.ImageRepository;
 
 @Service
 public class ArticleService implements CrudService<ArticleDto, Article, Long> {
@@ -31,10 +35,16 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     private ArticleRepository articleRepository;
 
     @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
     private ImageService imageService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     @org.springframework.transaction.annotation.Transactional
@@ -95,51 +105,81 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
     public ArticleDto update(Long key, Article updatedArticle, MultipartFile file) {
+        return updateMultiple(key, updatedArticle, new MultipartFile[] { file });
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public ArticleDto updateMultiple(Long key, Article updatedArticle, MultipartFile[] files) {
         if (articleRepository.existsById(key)) {
             Article article = articleRepository.findById(key).get();
+
+            // Manteniamo la data di pubblicazione originale recuperandola dal database
+            java.time.LocalDate originalPublishDate = article.getPublishDate();
 
             article.setTitle(updatedArticle.getTitle());
             article.setSubtitle(updatedArticle.getSubtitle());
             article.setBody(updatedArticle.getBody());
+            
+            // Ripristiniamo esplicitamente la data nell'oggetto gestito da Hibernate
+            article.setPublishDate(originalPublishDate);
+
             if (updatedArticle.getCategory() != null) {
                 article.setCategory(updatedArticle.getCategory());
             }
 
-            if (!file.isEmpty()) {
-                try {
-                    // Chiediamo prima al cloud di salvare il nuovo file per minimizzare i tempi di attesa della transazione
-                    CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
-                    String url = futureUrl.get();
+            boolean hasNewFiles = false;
+            if (files != null && files.length > 0) {
+                for (MultipartFile file : files) {
+                    if (file != null && !file.isEmpty()) {
+                        hasNewFiles = true;
+                        break;
+                    }
+                }
+            }
 
-                    if (article.getImages() != null) {
-                        // Svuotiamo i percorsi fisici dal cloud prima di far manipolare gli ID a Hibernate
+            if (hasNewFiles) {
+                try {
+                    if (article.getImages() != null && !article.getImages().isEmpty()) {
                         for (it.aulab.progetto_finale_docente.models.Image oldImg : article.getImages()) {
                             imageService.deleteImage(oldImg.getPath());
                         }
+                        
                         article.getImages().clear();
-                    } else {
+                        entityManager.flush();
+                    }
+
+                    if (article.getImages() == null) {
                         article.setImages(new ArrayList<>());
                     }
 
-                    // Invece di usare metodi esterni, istanziamo l'oggetto immagine nel flusso corrente
-                    it.aulab.progetto_finale_docente.models.Image newImage = new it.aulab.progetto_finale_docente.models.Image();
-                    newImage.setPath(url);
-                    newImage.setArticle(article);
-                    newImage.setPrimary(true);
+                    int validImageCount = 0;
+                    for (int i = 0; i < files.length; i++) {
+                        MultipartFile file = files[i];
+                        if (file != null && !file.isEmpty()) {
+                            CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
+                            String url = futureUrl.get();
 
-                    article.getImages().add(newImage);
+                            it.aulab.progetto_finale_docente.models.Image newImage = new it.aulab.progetto_finale_docente.models.Image();
+                            newImage.setPath(url);
+                            newImage.setArticle(article);
+                            newImage.setPrimary(validImageCount == 0);
+
+                            article.getImages().add(newImage);
+                            validImageCount++;
+                        }
+                    }
+
                     article.setIsAccepted(null);
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
-                if (!article.getTitle().equals(updatedArticle.getTitle()) || 
-                    !article.getSubtitle().equals(updatedArticle.getSubtitle()) || 
-                    !article.getBody().equals(updatedArticle.getBody())) {
-                    
+                if (!article.getTitle().equals(updatedArticle.getTitle()) ||
+                        !article.getSubtitle().equals(updatedArticle.getSubtitle()) ||
+                        !article.getBody().equals(updatedArticle.getBody())) {
+
                     article.setIsAccepted(null);
                 }
             }

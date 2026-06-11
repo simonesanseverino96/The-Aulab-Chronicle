@@ -1,142 +1,166 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head th:insert="~{index :: head}"></head>
 
-  <body>
-    <div th:insert="~{index :: navbar}"></div>
+<head th:insert="~{index :: head}"></head>
 
-    <div class="container-fluid p-3 bg-secondary-subtle text-center">
-      <div class="container">
-        <div class="col-12">
-          <span class="h1">Modifica articolo</span>
-          <h2 th:text="${article.title}">Titolo</h2>
-        </div>
+<body>
+  <div th:insert="~{index :: navbar}"></div>
+
+  <div class="container-fluid p-3 bg-secondary-subtle text-center">
+    <div class="container">
+      <div class="col-12">
+        <span class="h1">Modifica articolo</span>
+        <h2 th:text="${article.title}">Titolo</h2>
       </div>
     </div>
+  </div>
 
-    <div class="container">
-      <div class="col-12 my-5">
-        <form
-          th:action="@{/articles/update/{id}(id=${article.id})}"
-          method="POST"
-          th:object="${article}"
-          enctype="multipart/form-data"
-        >
-          <div class="col">
+  <div class="container">
+    <div class="col-12 my-5">
+      <form th:action="@{/articles/update/{id}(id=${article.id})}" method="POST" th:object="${article}"
+        enctype="multipart/form-data" id="editArticleForm">
+        <div class="row">
+
+          <div class="col-md-7">
             <div class="form-group mb-3">
               <label for="articleTitle" class="form-label">Titolo</label>
-              <input
-                id="articleTitle"
-                type="text"
-                class="form-control"
-                th:field="*{title}"
-                placeholder="Inserisci il titolo..."
-              />
-              <p
-                th:errors="*{title}"
-                class="text-danger"
-                th:if="${#fields.hasErrors('title')}"
-              ></p>
+              <input id="articleTitle" type="text" class="form-control" th:field="*{title}"
+                placeholder="Inserisci il titolo..." />
+              <p th:errors="*{title}" class="text-danger" th:if="${#fields.hasErrors('title')}"></p>
             </div>
 
             <div class="form-group mb-3">
-              <label for="articleSubtitle" class="form-label"
-                >Sottotitolo</label
-              >
-              <input
-                id="articleSubtitle"
-                type="text"
-                class="form-control"
-                th:field="*{subtitle}"
-                placeholder="Inserisci un sottotitolo..."
-              />
-              <p
-                th:errors="*{subtitle}"
-                class="text-danger"
-                th:if="${#fields.hasErrors('subtitle')}"
-              ></p>
+              <label for="articleSubtitle" class="form-label">Sottotitolo</label>
+              <input id="articleSubtitle" type="text" class="form-control" th:field="*{subtitle}"
+                placeholder="Inserisci un sottotitolo..." />
+              <p th:errors="*{subtitle}" class="text-danger" th:if="${#fields.hasErrors('subtitle')}"></p>
             </div>
 
             <div class="form-group mb-3">
               <label for="body" class="form-label">Articolo</label>
-              <input
-                id="body"
-                type="text"
-                class="form-control"
-                th:field="*{body}"
-                placeholder="Inserisci un testo..."
-              />
-              <p
-                th:errors="*{body}"
-                class="text-danger"
-                th:if="${#fields.hasErrors('body')}"
-              ></p>
+              <input id="body" type="text" class="form-control" th:field="*{body}"
+                placeholder="Inserisci un testo..." />
+              <p th:errors="*{body}" class="text-danger" th:if="${#fields.hasErrors('body')}"></p>
             </div>
 
             <div class="form-group mb-3">
               <label for="date" class="form-label">Publish date</label>
-              <input
-                id="date"
-                type="date"
-                class="form-control"
-                th:field="*{publishDate}"
-              />
-              <p
-                th:errors="*{publishDate}"
-                class="text-danger"
-                th:if="${#fields.hasErrors('publishDate')}"
-              ></p>
+              <input id="date" type="date" class="form-control" name="publishDate"
+                th:value="${article.publishDate != null ? #temporals.format(article.publishDate, 'yyyy-MM-dd') : ''}" 
+                readonly />
+              <p th:errors="*{publishDate}" class="text-danger" th:if="${#fields.hasErrors('publishDate')}"></p>
             </div>
-
+            
             <div class="form-group mb-3">
               <label for="category" class="form-label">Category</label>
               <select id="category" th:field="*{category}" class="form-select">
-                <option
-                  th:each="category:${categories}"
-                  th:value="${category.id}"
-                  th:text="${category.name}"
-                ></option>
+                <option th:each="category:${categories}" th:value="${category.id}" th:text="${category.name}"></option>
               </select>
-              <p
-                th:errors="*{category}"
-                class="text-danger"
-                th:if="${#fields.hasErrors('category')}"
-              ></p>
+              <p th:errors="*{category}" class="text-danger" th:if="${#fields.hasErrors('category')}"></p>
             </div>
 
-            <!-- Immagine attuale -->
-            <div class="mb-3" th:if="${not #lists.isEmpty(article.images)}">
-              <label class="form-label">Immagine dell'articolo</label>
-              <div class="text-center mt-2">
-                <img
-                  th:src="${article.images[0].path}"
-                  class="rounded shadow img-fluid"
-                  alt="Anteprima"
-                  style="max-height: 450px"
-                />
-              </div>
-            </div>
-
-            <div th:if="${#lists.isEmpty(article.images)}">
-              <label class="form-label">Immagine dell'articolo</label>
-              <p>Immagine non presente</p>
-            </div>
-
-            <!-- Nuova immagine -->
             <div class="mb-3">
-              <label for="image" class="form-label">Immagine</label>
-              <input type="file" name="file" id="image" class="form-control" />
+              <label for="image" class="form-label">Seleziona nuove immagini</label>
+              <input type="file" name="files" id="image" class="form-control" multiple />
             </div>
 
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-success mt-3">
               Modifica articolo
             </button>
           </div>
-        </form>
-      </div>
-    </div>
 
-    <div th:insert="~{index :: footer}"></div>
-    <script th:replace="~{index :: bootstrapScript}"></script>
-  </body>
+          <div class="col-md-5 border-start ps-4">
+            <div id="currentImagesSection" th:if="${not #lists.isEmpty(article.images)}">
+              <h5 class="mb-3">Immagini attuali sul Server</h5>
+              <div class="row g-2">
+                <div class="col-6 text-center position-relative mb-2" th:each="img, iter : ${article.images}">
+                  <img th:src="${img.path}" class="rounded shadow img-fluid"
+                    style="max-height: 140px; width: 100%; object-fit: cover;" />
+                  <span th:if="${iter.index == 0}"
+                    class="badge bg-primary position-absolute top-0 start-50 translate-middle-x mt-1">Principale</span>
+                </div>
+              </div>
+              <hr class="my-4">
+            </div>
+
+            <div id="previewSection" style="display: none;">
+              <h5 class="mb-3 text-success">Anteprima Nuove Immagini</h5>
+              <div class="row g-2" id="previewContainer"></div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div th:insert="~{index :: footer}"></div>
+  <script th:replace="~{index :: bootstrapScript}"></script>
+
+  <script>
+    let selectedFiles = [];
+
+    document.getElementById('image').addEventListener('change', function (event) {
+      const files = Array.from(event.target.files);
+
+      selectedFiles = selectedFiles.concat(files);
+
+      updatePreviewsAndInput();
+    });
+
+    function updatePreviewsAndInput() {
+      const previewSection = document.getElementById('previewSection');
+      const previewContainer = document.getElementById('previewContainer');
+      const inputElement = document.getElementById('image');
+
+      previewContainer.innerHTML = '';
+
+      if (selectedFiles.length > 0) {
+        previewSection.style.display = 'block';
+
+        selectedFiles.forEach((file, index) => {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const colDiv = document.createElement('div');
+            colDiv.className = 'col-6 text-center position-relative mb-3';
+
+            let badgeHTML = '';
+            if (index === 0) {
+              badgeHTML = '<span class="badge bg-success position-absolute top-0 start-50 translate-middle-x mt-1">Nuova Principale</span>';
+            } else {
+              badgeHTML = '<span class="badge bg-secondary position-absolute top-0 start-50 translate-middle-x mt-1">Secondaria</span>';
+            }
+
+            colDiv.innerHTML = `
+                <div class="position-relative">
+                  <img src="${e.target.result}" class="rounded shadow img-fluid" style="max-height: 140px; width: 100%; object-fit: cover;" />
+                  ${badgeHTML}
+                  <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 m-1 shadow" 
+                          style="line-height: 1; padding: 4px 8px; font-size: 12px; font-weight: bold;" 
+                          onclick="removeFile(${index})">&times;</button>
+                </div>
+              `;
+
+            previewContainer.appendChild(colDiv);
+          }
+
+          reader.readAsDataURL(file);
+        });
+      } else {
+        previewSection.style.display = 'none';
+      }
+
+      const dataTransfer = new DataTransfer();
+      selectedFiles.forEach(file => dataTransfer.items.add(file));
+      inputElement.files = dataTransfer.files;
+    }
+
+    function removeFile(indexToRemove) {
+      selectedFiles.splice(indexToRemove, 1);
+      updatePreviewsAndInput();
+    }
+  </script>
+</body>
+
 </html>

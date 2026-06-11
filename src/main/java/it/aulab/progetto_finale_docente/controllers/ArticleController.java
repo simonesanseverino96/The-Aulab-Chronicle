@@ -99,7 +99,6 @@ public class ArticleController {
             Principal principal, RedirectAttributes redirectAttributes) {
         ArticleDto articleDto = articleService.read(id);
 
-        // Blocca il revisore se l'articolo è suo
         if (articleDto.getUser().getEmail().equals(principal.getName())) {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Non puoi valutare un tuo articolo!");
@@ -119,7 +118,6 @@ public class ArticleController {
 
         ArticleDto articleDto = articleService.read(articleId);
 
-        // Blocca il revisore se l'articolo è suo
         if (articleDto.getUser().getEmail().equals(principal.getName())) {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Non puoi valutare un tuo articolo!");
@@ -166,7 +164,7 @@ public class ArticleController {
             BindingResult result,
             RedirectAttributes redirectAttributes,
             Principal principal,
-            MultipartFile file,
+            @RequestParam("files") MultipartFile[] files,
             Model viewModel) {
 
         if (result.hasErrors()) {
@@ -182,7 +180,8 @@ public class ArticleController {
             return "article/edit";
         }
 
-        articleService.update(id, article, file);
+        articleService.updateMultiple(id, article, files);
+
         redirectAttributes.addFlashAttribute("successMessage", "Articolo modificato con successo!");
         return "redirect:/articles";
     }
