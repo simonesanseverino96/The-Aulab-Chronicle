@@ -1,160 +1,396 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:insert="~{index :: head}"></head>
 
-<head th:insert="~{index :: head}"></head>
+  <body>
+    <div th:insert="~{index :: navbar}"></div>
 
-<body>
-  <div th:insert="~{index :: navbar}"></div>
-
-  <div class="container my-5 pb-5">
-    <div class="dashboard-header">
-      <h1 class="fw-bold">
-        <i class="fa-solid fa-pen-to-square me-2"></i>
-        <span th:text="${title}">Crea un articolo</span>
-      </h1>
-      <p class="lead opacity-75">
-        Scrivi il tuo articolo e invialo in revisione
-      </p>
+    <div class="container my-5 pb-5">
+      <div class="dashboard-header">
+        <h1 class="fw-bold">
+          <i class="fa-solid fa-pen-to-square me-2"></i>
+          <span th:text="${title}">Crea un articolo</span>
+        </h1>
+        <p class="lead opacity-75">
+          Scrivi il tuo articolo e invialo in revisione
+        </p>
+      </div>
     </div>
-  </div>
 
-  <div class="container my-5 pb-5">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-8">
+    <div class="container my-5 pb-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+          <div th:if="${errorMessage}" class="alert alert-danger">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <span th:text="${errorMessage}"></span>
+          </div>
 
-        <div th:if="${errorMessage}" class="alert alert-danger">
-          <i class="fa-solid fa-triangle-exclamation me-2"></i>
-          <span th:text="${errorMessage}"></span>
-        </div>
-        
-        <div class="form-card">
-          <form th:action="@{/articles}" method="POST" th:object="${article}" enctype="multipart/form-data">
-            <div class="form-group mb-3">
-              <label for="articleTitle" class="form-label fw-semibold">
-                <i class="fa-solid fa-heading me-1"></i>Titolo
-              </label>
-              <input id="articleTitle" type="text" class="form-control" th:field="*{title}"
-                placeholder="Inserisci il titolo..." />
-              <p th:errors="*{title}" class="text-danger small mt-1" th:if="${#fields.hasErrors('title')}"></p>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="articleSubtitle" class="form-label fw-semibold">
-                <i class="fa-solid fa-align-left me-1"></i>Sottotitolo
-              </label>
-              <input id="articleSubtitle" type="text" class="form-control" th:field="*{subtitle}"
-                placeholder="Inserisci un sottotitolo..." />
-              <p th:errors="*{subtitle}" class="text-danger small mt-1" th:if="${#fields.hasErrors('subtitle')}"></p>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="body" class="form-label fw-semibold">
-                <i class="fa-solid fa-file-lines me-1"></i>Testo articolo
-              </label>
-              <textarea id="body" class="form-control" th:field="*{body}" rows="8"
-                placeholder="Scrivi il tuo articolo..."></textarea>
-              <p th:errors="*{body}" class="text-danger small mt-1" th:if="${#fields.hasErrors('body')}"></p>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="date" class="form-label fw-semibold">
-                  <i class="fa-solid fa-calendar me-1"></i>Data pubblicazione
+          <div class="form-card">
+            <form
+              th:action="@{/articles}"
+              method="POST"
+              th:object="${article}"
+              enctype="multipart/form-data"
+            >
+              <div class="form-group mb-3">
+                <label for="articleTitle" class="form-label fw-semibold">
+                  <i class="fa-solid fa-heading me-1"></i>Titolo
                 </label>
-                <input id="date" type="date" class="form-control" th:field="*{publishDate}" />
-                <p th:errors="*{publishDate}" class="text-danger small mt-1"
-                  th:if="${#fields.hasErrors('publishDate')}"></p>
+                <input
+                  id="articleTitle"
+                  type="text"
+                  class="form-control"
+                  th:field="*{title}"
+                  placeholder="Inserisci il titolo..."
+                />
+                <p
+                  th:errors="*{title}"
+                  class="text-danger small mt-1"
+                  th:if="${#fields.hasErrors('title')}"
+                ></p>
               </div>
 
-              <div class="col-md-6 mb-3">
-                <label for="category" class="form-label fw-semibold">
-                  <i class="fa-solid fa-tag me-1"></i>Categoria
+              <div class="form-group mb-3">
+                <label for="articleSubtitle" class="form-label fw-semibold">
+                  <i class="fa-solid fa-align-left me-1"></i>Sottotitolo
                 </label>
-                <select id="category" th:field="*{category}" class="form-select">
-                  <option value="">-- Seleziona categoria --</option>
-                  <option th:each="category:${categories}" th:value="${category.id}" th:text="${category.name}">
-                  </option>
-                </select>
-                <p th:errors="*{category}" class="text-danger small mt-1" th:if="${#fields.hasErrors('category')}"></p>
+                <input
+                  id="articleSubtitle"
+                  type="text"
+                  class="form-control"
+                  th:field="*{subtitle}"
+                  placeholder="Inserisci un sottotitolo..."
+                />
+                <p
+                  th:errors="*{subtitle}"
+                  class="text-danger small mt-1"
+                  th:if="${#fields.hasErrors('subtitle')}"
+                ></p>
               </div>
-            </div>
 
-            <div class="form-group mb-4">
-              <label for="image" class="form-label fw-semibold text-dark mb-2">
-                <i class="fa-solid fa-images me-1 text-primary"></i> Galleria
-                Immagini
-              </label>
+              <div class="form-group mb-3">
+                <label for="body" class="form-label fw-semibold">
+                  <i class="fa-solid fa-file-lines me-1"></i>Testo articolo
+                </label>
+                <textarea
+                  id="body"
+                  class="form-control"
+                  th:field="*{body}"
+                  rows="8"
+                  placeholder="Scrivi il tuo articolo..."
+                ></textarea>
+                <p
+                  th:errors="*{body}"
+                  class="text-danger small mt-1"
+                  th:if="${#fields.hasErrors('body')}"
+                ></p>
+              </div>
 
-              <div class="row g-3 align-items-stretch">
-                <div class="col-12 col-md-7">
-                  <div class="custom-upload-zone">
-                    <input type="file" name="files" id="image" class="custom-upload-input" multiple
-                      accept="image/png, image/jpeg, image/webp" onchange="previewMainImage(event)" />
-                    <div class="py-3">
-                      <i class="fa-solid fa-cloud-arrow-up fa-2x text-muted mb-2"></i>
-                      <h6 class="mb-1">
-                        Trascina qui le immagini o
-                        <span class="text-primary fw-semibold">sfoglia</span>
-                      </h6>
-                      <p class="custom-upload-text mb-0">
-                        Formati: JPG, PNG, WEBP (max 10MB)
-                      </p>
-                      <span
-                        class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2 py-1 mt-2 d-inline-block style-badge">
-                        <i class="fa-solid fa-layer-group me-1"></i>
-                        Multi-selezione attiva
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="date" class="form-label fw-semibold">
+                    <i class="fa-solid fa-calendar me-1"></i>Data pubblicazione
+                  </label>
+                  <input
+                    id="date"
+                    type="date"
+                    class="form-control"
+                    th:field="*{publishDate}"
+                  />
+                  <p
+                    th:errors="*{publishDate}"
+                    class="text-danger small mt-1"
+                    th:if="${#fields.hasErrors('publishDate')}"
+                  ></p>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="category" class="form-label fw-semibold">
+                    <i class="fa-solid fa-tag me-1"></i>Categoria
+                  </label>
+                  <select
+                    id="category"
+                    th:field="*{category}"
+                    class="form-select"
+                  >
+                    <option value="">-- Seleziona categoria --</option>
+                    <option
+                      th:each="category:${categories}"
+                      th:value="${category.id}"
+                      th:text="${category.name}"
+                    ></option>
+                  </select>
+                  <p
+                    th:errors="*{category}"
+                    class="text-danger small mt-1"
+                    th:if="${#fields.hasErrors('category')}"
+                  ></p>
+                </div>
+              </div>
+
+              <div class="form-group mb-4">
+                <label
+                  for="image"
+                  class="form-label fw-semibold text-dark mb-2"
+                >
+                  <i class="fa-solid fa-images me-1 text-primary"></i> Galleria
+                  Immagini
+                </label>
+
+                <div class="row g-3 align-items-stretch">
+                  <div class="col-12 col-md-7">
+                    <div class="custom-upload-zone">
+                      <input
+                        type="file"
+                        name="files"
+                        id="image"
+                        class="custom-upload-input"
+                        multiple
+                        accept="image/png, image/jpeg, image/webp"
+                        onchange="previewMainImage(event)"
+                      />
+                      <div class="py-3">
+                        <i
+                          class="fa-solid fa-cloud-arrow-up fa-2x text-muted mb-2"
+                        ></i>
+                        <h6 class="mb-1">
+                          Trascina qui le immagini o
+                          <span class="text-primary fw-semibold">sfoglia</span>
+                        </h6>
+                        <p class="custom-upload-text mb-0">
+                          Formati: JPG, PNG, WEBP (max 10MB)
+                        </p>
+                        <span
+                          class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2 py-1 mt-2 d-inline-block style-badge"
+                        >
+                          <i class="fa-solid fa-layer-group me-1"></i>
+                          Multi-selezione attiva
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-5">
+                    <div class="custom-preview-card">
+                      <div
+                        id="thumbnails-container"
+                        class="row g-2 mt-2"
+                        style="display: none"
+                      >
+                        <p class="small text-muted mb-1">
+                          Clicca un'immagine per impostarla come copertina
+                        </p>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="fa-solid fa-star text-warning small"></i>
+                        <span class="custom-preview-title"
+                          >Immagine di Copertina</span
+                        >
+                      </div>
+                      <div
+                        id="main-image-preview-container"
+                        class="custom-preview-img-container d-flex align-items-center justify-content-center"
+                      >
+                        <img
+                          id="main-image-preview"
+                          src=""
+                          class="w-100 h-100 object-fit-contain"
+                          alt="Anteprima principale"
+                          style="display: none"
+                        />
+                        <i
+                          id="preview-placeholder"
+                          class="fa-solid fa-feather-pointed fa-3x"
+                          style="color: var(--bs-primary)"
+                        ></i>
+                      </div>
+                      <span class="custom-preview-footer">
+                        Prima foto automatica
                       </span>
                     </div>
                   </div>
                 </div>
-
-                <div class="col-12 col-md-5">
-                  <div class="custom-preview-card">
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                      <i class="fa-solid fa-star text-warning small"></i>
-                      <span class="custom-preview-title">Immagine di Copertina</span>
-                    </div>
-                    <div id="main-image-preview-container" class="custom-preview-img-container">
-                      <img id="main-image-preview" src="/images/default.jpg" class="w-100 h-100 object-fit-contain"
-                        alt="Anteprima principale" />
-                    </div>
-                    <span class="custom-preview-footer">
-                      Prima foto automatica
-                    </span>
-                  </div>
-                </div>
               </div>
-            </div>
 
-            <div class="d-grid">
-              <button type="submit" class="btn btn-success btn-lg">
-                <i class="fa-solid fa-paper-plane me-2"></i>Crea articolo
-              </button>
-            </div>
-          </form>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success btn-lg">
+                  <i class="fa-solid fa-paper-plane me-2"></i>Crea articolo
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div th:insert="~{index :: footer}"></div>
-  <script th:replace="~{index :: bootstrapScript}"></script>
+    <div th:insert="~{index :: footer}"></div>
+    <script th:replace="~{index :: bootstrapScript}"></script>
 
-  <script>
-    function previewMainImage(event) {
-      const files = event.target.files;
-      const preview = document.getElementById("main-image-preview");
-      if (files && files[0]) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          preview.src = e.target.result;
-        };
-        reader.readAsDataURL(files[0]);
-      } else {
-        preview.src = "/images/default.jpg";
+    <script>
+      let selectedIndex = 0;
+      let loadedFiles = [];
+
+      function previewMainImage(event) {
+        const newFiles = Array.from(event.target.files);
+        const preview = document.getElementById("main-image-preview");
+        const placeholder = document.getElementById("preview-placeholder");
+        const thumbnailsContainer = document.getElementById(
+          "thumbnails-container",
+        );
+        const input = document.getElementById("image");
+
+        // Aggiunge i nuovi file a quelli già caricati
+        loadedFiles = [...loadedFiles, ...newFiles];
+
+        // Ricostruisce il DataTransfer con tutti i file
+        const dt = new DataTransfer();
+        loadedFiles.forEach((f) => dt.items.add(f));
+        input.files = dt.files;
+
+        thumbnailsContainer.innerHTML =
+          '<p class="small text-muted mb-1">Clicca un\'immagine per impostarla come copertina</p>';
+        thumbnailsContainer.style.display = "flex";
+        thumbnailsContainer.classList.add("flex-wrap");
+
+        if (loadedFiles.length === 0) {
+          preview.style.display = "none";
+          placeholder.style.display = "block";
+          thumbnailsContainer.style.display = "none";
+          return;
+        }
+
+        loadedFiles.forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const col = document.createElement("div");
+            col.className = "col-3";
+            col.id = `thumb-col-${index}`;
+            col.innerHTML = `
+                <div class="ratio ratio-1x1 rounded overflow-hidden border position-relative ${index === selectedIndex ? "border-primary border-2" : "border-secondary"}" 
+                     style="cursor:pointer;" id="thumb-wrapper-${index}"
+                     onclick="selectCover(${index}, '${e.target.result}')">
+                    <img src="${e.target.result}" class="object-fit-cover w-100 h-100" alt="img ${index}"/>
+                    ${index === selectedIndex ? '<span class="position-absolute top-0 start-0 badge bg-primary m-1" style="font-size:0.6rem;">Copertina</span>' : ""}
+                    <button type="button" onclick="removeImage(event, ${index})" 
+                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 p-0 d-flex align-items-center justify-content-center"
+                        style="width:20px; height:20px; font-size:0.6rem; z-index:10;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>`;
+            thumbnailsContainer.appendChild(col);
+
+            if (index === selectedIndex) {
+              preview.src = e.target.result;
+              preview.style.display = "block";
+              placeholder.style.display = "none";
+            }
+          };
+          reader.readAsDataURL(file);
+        });
       }
-    }
-  </script>
-</body>
 
+      function selectCover(index, src) {
+        const preview = document.getElementById("main-image-preview");
+        const input = document.getElementById("image");
+
+        // Aggiorna anteprima principale
+        preview.src = src;
+        selectedIndex = index;
+
+        // Aggiorna bordi miniature
+        loadedFiles.forEach((_, i) => {
+          const wrapper = document.getElementById(`thumb-wrapper-${i}`);
+          if (wrapper) {
+            wrapper.className = `ratio ratio-1x1 rounded overflow-hidden border ${i === index ? "border-primary border-2" : "border-secondary"}`;
+            // Aggiorna badge copertina
+            const badge = wrapper.querySelector(".badge");
+            if (badge) badge.remove();
+            if (i === index) {
+              const badge = document.createElement("span");
+              badge.className =
+                "position-absolute top-0 start-0 badge bg-primary m-1";
+              badge.style.fontSize = "0.6rem";
+              badge.textContent = "Copertina";
+              wrapper.appendChild(badge);
+            }
+          }
+        });
+
+        // Riordina i file mettendo quello selezionato per primo
+        const reordered = [...loadedFiles];
+        const [selected] = reordered.splice(index, 1);
+        reordered.unshift(selected);
+
+        // Ricrea il DataTransfer con i file riordinati
+        const dt = new DataTransfer();
+        reordered.forEach((f) => dt.items.add(f));
+        input.files = dt.files;
+      }
+
+      function removeImage(event, index) {
+        event.stopPropagation();
+
+        loadedFiles.splice(index, 1);
+
+        const dt = new DataTransfer();
+        loadedFiles.forEach((f) => dt.items.add(f));
+        document.getElementById("image").files = dt.files;
+
+        const preview = document.getElementById("main-image-preview");
+        const placeholder = document.getElementById("preview-placeholder");
+        const thumbnailsContainer = document.getElementById(
+          "thumbnails-container",
+        );
+
+        if (loadedFiles.length === 0) {
+          preview.style.display = "none";
+          placeholder.style.display = "block";
+          thumbnailsContainer.style.display = "none";
+          selectedIndex = 0;
+          return;
+        }
+
+        // Se l'immagine rimossa era la copertina, imposta la prima come nuova copertina
+        if (selectedIndex >= loadedFiles.length) {
+          selectedIndex = 0;
+        }
+
+        // Rimuovi solo la miniatura eliminata e riassegna gli indici
+        thumbnailsContainer.innerHTML =
+          '<p class="small text-muted mb-1">Clicca un\'immagine per impostarla come copertina</p>';
+
+        loadedFiles.forEach((file, i) => {
+          const existingImg = document.querySelector(
+            `#thumb-col-${i > index ? i + 1 : i} img`,
+          );
+          const src = existingImg ? existingImg.src : null;
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const col = document.createElement("div");
+            col.className = "col-3";
+            col.id = `thumb-col-${i}`;
+            col.innerHTML = `
+                <div class="ratio ratio-1x1 rounded overflow-hidden border position-relative ${i === selectedIndex ? "border-primary border-2" : "border-secondary"}" 
+                     style="cursor:pointer;" id="thumb-wrapper-${i}"
+                     onclick="selectCover(${i}, '${e.target.result}')">
+                    <img src="${e.target.result}" class="object-fit-cover w-100 h-100" alt="img ${i}"/>
+                    ${i === selectedIndex ? '<span class="position-absolute top-0 start-0 badge bg-primary m-1" style="font-size:0.6rem;">Copertina</span>' : ""}
+                    <button type="button" onclick="removeImage(event, ${i})" 
+                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 p-0 d-flex align-items-center justify-content-center"
+                        style="width:20px; height:20px; font-size:0.6rem; z-index:10;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>`;
+            thumbnailsContainer.appendChild(col);
+
+            if (i === selectedIndex) {
+              preview.src = e.target.result;
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    </script>
+  </body>
 </html>
