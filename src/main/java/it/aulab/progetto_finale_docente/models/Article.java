@@ -2,17 +2,8 @@ package it.aulab.progetto_finale_docente.models;
 
 import java.time.LocalDate;
 import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -42,10 +33,12 @@ public class Article {
     private String subtitle;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    @NotEmpty(message = "Il corpo dell''articolo non deve essere vuoto")
+    @NotEmpty(message = "Il corpo dell'articolo non deve essere vuoto")
     private String body;
 
-    @Column(name = "publish_date", nullable = true, updatable = false)
+    
+    @Column(name = "publish_date", nullable = false)
+    @NotNull(message = "La data di pubblicazione è obbligatoria")
     private LocalDate publishDate;
 
     @Column(nullable = true)
@@ -58,35 +51,15 @@ public class Article {
 
     @ManyToOne
     @JsonIgnoreProperties({ "articles" })
-    @NotNull(message = "Devi selezionare una categoria per pubblicare l''articolo.")
+    @NotNull(message = "Devi selezionare una categoria per pubblicare l'articolo.")
     private Category category;
 
-    @jakarta.persistence.OneToMany(mappedBy = "article", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({ "article" })
     private java.util.List<Image> images = new java.util.ArrayList<>();
 
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        Article article = (Article) obj;
-        
-        if (id != null && article.id != null) {
-            return Objects.equals(id, article.id);
-        }
-        
-        return Objects.equals(title, article.title) &&
-                Objects.equals(subtitle, article.subtitle) &&
-                Objects.equals(body, article.body);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, subtitle, body);
-    }
+    
 }
