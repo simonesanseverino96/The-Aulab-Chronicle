@@ -1,7 +1,6 @@
 package it.aulab.progetto_finale_docente.models;
 
 import java.time.LocalDate;
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -36,7 +35,6 @@ public class Article {
     @NotEmpty(message = "Il corpo dell'articolo non deve essere vuoto")
     private String body;
 
-    
     @Column(name = "publish_date", nullable = false)
     @NotNull(message = "La data di pubblicazione è obbligatoria")
     private LocalDate publishDate;
@@ -61,5 +59,4 @@ public class Article {
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 
-    
 }

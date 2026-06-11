@@ -2,7 +2,6 @@ package it.aulab.progetto_finale_docente.services;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +22,6 @@ import it.aulab.progetto_finale_docente.models.Article;
 import it.aulab.progetto_finale_docente.models.User;
 import it.aulab.progetto_finale_docente.repositories.ArticleRepository;
 import it.aulab.progetto_finale_docente.repositories.UserRepository;
-import it.aulab.progetto_finale_docente.repositories.ImageRepository;
 
 @Service
 public class ArticleService implements CrudService<ArticleDto, Article, Long> {
@@ -33,9 +31,6 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
 
     @Autowired
     private ArticleRepository articleRepository;
-
-    @Autowired
-    private ImageRepository imageRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -120,7 +115,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
             article.setTitle(updatedArticle.getTitle());
             article.setSubtitle(updatedArticle.getSubtitle());
             article.setBody(updatedArticle.getBody());
-            
+
             // Ripristiniamo esplicitamente la data nell'oggetto gestito da Hibernate
             article.setPublishDate(originalPublishDate);
 
@@ -144,7 +139,7 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
                         for (it.aulab.progetto_finale_docente.models.Image oldImg : article.getImages()) {
                             imageService.deleteImage(oldImg.getPath());
                         }
-                        
+
                         article.getImages().clear();
                         entityManager.flush();
                     }
