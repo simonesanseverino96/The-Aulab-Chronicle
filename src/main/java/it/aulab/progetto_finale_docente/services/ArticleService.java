@@ -98,39 +98,54 @@ public class ArticleService implements CrudService<ArticleDto, Article, Long> {
     @org.springframework.transaction.annotation.Transactional
     public ArticleDto update(Long key, Article updatedArticle, MultipartFile file) {
         if (articleRepository.existsById(key)) {
-            updatedArticle.setId(key);
             Article article = articleRepository.findById(key).get();
 
-            updatedArticle.setUser(article.getUser());
+            article.setTitle(updatedArticle.getTitle());
+            article.setSubtitle(updatedArticle.getSubtitle());
+            article.setBody(updatedArticle.getBody());
+            if (updatedArticle.getCategory() != null) {
+                article.setCategory(updatedArticle.getCategory());
+            }
 
             if (!file.isEmpty()) {
                 try {
-                    if (article.getImages() != null && !article.getImages().isEmpty()) {
+                    // Chiediamo prima al cloud di salvare il nuovo file per minimizzare i tempi di attesa della transazione
+                    CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
+                    String url = futureUrl.get();
+
+                    if (article.getImages() != null) {
+                        // Svuotiamo i percorsi fisici dal cloud prima di far manipolare gli ID a Hibernate
                         for (it.aulab.progetto_finale_docente.models.Image oldImg : article.getImages()) {
                             imageService.deleteImage(oldImg.getPath());
                         }
                         article.getImages().clear();
+                    } else {
+                        article.setImages(new ArrayList<>());
                     }
 
-                    CompletableFuture<String> futureUrl = imageService.saveImageOnCloud(file);
-                    String url = futureUrl.get();
-                    saveImageOnDBWithPrimaryFlag(url, updatedArticle, true);
+                    // Invece di usare metodi esterni, istanziamo l'oggetto immagine nel flusso corrente
+                    it.aulab.progetto_finale_docente.models.Image newImage = new it.aulab.progetto_finale_docente.models.Image();
+                    newImage.setPath(url);
+                    newImage.setArticle(article);
+                    newImage.setPrimary(true);
 
-                    updatedArticle.setIsAccepted(null);
+                    article.getImages().add(newImage);
+                    article.setIsAccepted(null);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (article.getImages() == null || article.getImages().isEmpty()) {
-                updatedArticle.setIsAccepted(article.getIsAccepted());
             } else {
-                updatedArticle.setImages(article.getImages());
-                if (!updatedArticle.equals(article)) {
-                    updatedArticle.setIsAccepted(null);
-                } else {
-                    updatedArticle.setIsAccepted(article.getIsAccepted());
+                if (!article.getTitle().equals(updatedArticle.getTitle()) || 
+                    !article.getSubtitle().equals(updatedArticle.getSubtitle()) || 
+                    !article.getBody().equals(updatedArticle.getBody())) {
+                    
+                    article.setIsAccepted(null);
                 }
             }
-            return modelMapper.map(articleRepository.save(updatedArticle), ArticleDto.class);
+
+            Article savedArticle = articleRepository.save(article);
+            return modelMapper.map(savedArticle, ArticleDto.class);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
