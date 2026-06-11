@@ -39,15 +39,17 @@ public class SecurityConfig {
                                                                 "/articles/edit/{id}", "/articles/update/{id}",
                                                                 "/articles/delete/{id}")
                                                 .hasRole("WRITER")
+                                                
+                                                // MODIFICATO: Spostate qui dentro le rotte delle ricerche e della lista articoli per renderle pubbliche (.permitAll)
                                                 .requestMatchers("/register/**", "/", "/login",
                                                                 "/images/**", "/articles/detail/**",
                                                                 "/search/**", "/css/**",
-                                                                "/forgot-password", "/reset-password")
+                                                                "/forgot-password", "/reset-password",
+                                                                "/articles", "/articles/search", "/categories/search/**")
                                                 .permitAll()
 
-                                                .requestMatchers("/articles", "/operations/career/**",
-                                                                "/articles/search", "/categories/search/**",
-                                                                "/profile/**")
+                                                // MODIFICATO: Lasciate sotto autenticazione solo la gestione della carriera e il profilo
+                                                .requestMatchers("/operations/career/**", "/profile/**")
                                                 .authenticated()
 
                                                 .anyRequest().authenticated())
