@@ -1,0 +1,27 @@
+spring.application.name=progetto_finale_docente
+
+# --- DATABASE ---
+spring.datasource.url=jdbc:mysql://localhost:3306/NOME_DATABASE
+spring.datasource.username=TUO_NOME_DB
+spring.datasource.password=TUA_PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.open-in-view=false
+
+# --- CONFIGURAZIONE SUPABASE PER IMMAGINI ---
+supabase.url=https://TUO_PROGETTO.supabase.co
+supabase.key=TUA_CHIAVE_SUPABASE
+supabase.bucket=/storage/v1/object/immagini-articoli/
+supabase.image=/storage/v1/object/public/immagini-articoli/
+
+# --- CONFIGURAZIONE EMAIL (Mailtrap) ---
+spring.mail.host=sandbox.smtp.mailtrap.io
+spring.mail.port=2525
+spring.mail.username=TUO_USERNAME_MAILTRAP
+spring.mail.password=TUA_PASSWORD_MAILTRAP
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+
+# --- UPLOAD FILE ---
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=50MB
