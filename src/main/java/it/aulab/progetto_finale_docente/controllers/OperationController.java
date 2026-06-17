@@ -3,7 +3,6 @@ package it.aulab.progetto_finale_docente.controllers;
 import java.security.Principal;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,14 +23,17 @@ import it.aulab.progetto_finale_docente.services.CareerRequestService;
 @RequestMapping("/operations")
 public class OperationController {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final CareerRequestService careerRequestService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CareerRequestService careerRequestService;
+    public OperationController(RoleRepository roleRepository,
+            UserRepository userRepository,
+            CareerRequestService careerRequestService) {
+        this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
+        this.careerRequestService = careerRequestService;
+    }
 
     @GetMapping("/career/request")
     public String careerRequestCreate(Model viewModel) {
@@ -88,7 +90,7 @@ public class OperationController {
                 "Ruolo abilitato per l'utente");
         return "redirect:/admin/dashboard";
     }
-    
+
     @PostMapping("/career/request/reject/{id}")
     public String careerRequestReject(@PathVariable Long id,
             RedirectAttributes redirectAttributes) {

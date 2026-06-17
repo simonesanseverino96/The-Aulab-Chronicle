@@ -1,6 +1,5 @@
 package it.aulab.progetto_finale_docente.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,10 +16,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 @EnableWebSecurity
 public class SecurityConfig {
 
-        @Autowired
-        private CustomUserDetailsService customUserDetailsService;
-        @Autowired
-        private PasswordEncoder passwordEncoder;
+        private final CustomUserDetailsService customUserDetailsService;
+        private final PasswordEncoder passwordEncoder;
+
+        public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+                        PasswordEncoder passwordEncoder) {
+                this.customUserDetailsService = customUserDetailsService;
+                this.passwordEncoder = passwordEncoder;
+        }
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,16 +42,19 @@ public class SecurityConfig {
                                                                 "/articles/edit/{id}", "/articles/update/{id}",
                                                                 "/articles/delete/{id}")
                                                 .hasRole("WRITER")
-                                                
-                                                // MODIFICATO: Spostate qui dentro le rotte delle ricerche e della lista articoli per renderle pubbliche (.permitAll)
+
+                                                // MODIFICATO: Spostate qui dentro le rotte delle ricerche e della lista
+                                                // articoli per renderle pubbliche (.permitAll)
                                                 .requestMatchers("/register/**", "/", "/login",
                                                                 "/images/**", "/articles/detail/**",
                                                                 "/search/**", "/css/**",
                                                                 "/forgot-password", "/reset-password",
-                                                                "/articles", "/articles/search", "/categories/search/**")
+                                                                "/articles", "/articles/search",
+                                                                "/categories/search/**")
                                                 .permitAll()
 
-                                                // MODIFICATO: Lasciate sotto autenticazione solo la gestione della carriera e il profilo
+                                                // MODIFICATO: Lasciate sotto autenticazione solo la gestione della
+                                                // carriera e il profilo
                                                 .requestMatchers("/operations/career/**", "/profile/**")
                                                 .authenticated()
 
@@ -68,7 +74,6 @@ public class SecurityConfig {
                 return http.build();
         }
 
-        @Autowired
         public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
                 auth
                                 .userDetailsService(customUserDetailsService)

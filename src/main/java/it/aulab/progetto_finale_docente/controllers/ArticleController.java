@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,15 +31,17 @@ import jakarta.validation.Valid;
 @RequestMapping("/articles")
 public class ArticleController {
 
-    @Autowired
-    @Qualifier("categoryService")
-    private CrudService<CategoryDto, Category, Long> categoryService;
+    private final CrudService<CategoryDto, Category, Long> categoryService;
+    private final org.modelmapper.ModelMapper modelMapper;
+    private final ArticleService articleService;
 
-    @Autowired
-    private org.modelmapper.ModelMapper modelMapper;
-
-    @Autowired
-    private ArticleService articleService;
+    public ArticleController(@Qualifier("categoryService") CrudService<CategoryDto, Category, Long> categoryService,
+            org.modelmapper.ModelMapper modelMapper,
+            ArticleService articleService) {
+        this.categoryService = categoryService;
+        this.modelMapper = modelMapper;
+        this.articleService = articleService;
+    }
 
     @GetMapping
     public String articlesIndex(Model viewModel) {

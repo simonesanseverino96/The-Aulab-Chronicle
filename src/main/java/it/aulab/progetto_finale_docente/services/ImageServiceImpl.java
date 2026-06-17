@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,8 +23,11 @@ import it.aulab.progetto_finale_docente.repositories.ImageRepository;
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    @Autowired
-    private ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
+
+    public ImageServiceImpl(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
+    }
 
     @Value("${supabase.url}")
     private String supabaseUrl;
@@ -41,7 +43,8 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void saveImageOnDB(String url, Article article) {
-        // La traccia chiede di sostituire la parola/path di 'bucket' con quella di 'image' nell'url prima di salvare
+        // La traccia chiede di sostituire la parola/path di 'bucket' con quella di
+        // 'image' nell'url prima di salvare
         String finalPath = url.replace(supabaseBucket, supabaseImage);
 
         Image image = Image.builder()
@@ -82,9 +85,10 @@ public class ImageServiceImpl implements ImageService {
         HttpEntity<byte[]> requestEntity = new HttpEntity<>(file.getBytes(), headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        
+
         // Eseguiamo la chiamata POST
-        ResponseEntity<String> response = restTemplate.exchange(uploadUrl, HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(uploadUrl, HttpMethod.POST, requestEntity,
+                String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             // Se va a buon fine, restituiamo l'URL completo del file appena caricato
@@ -98,10 +102,10 @@ public class ImageServiceImpl implements ImageService {
     @Async
     @Transactional // Richiesto esplicitamente per la cancellazione sul DB
     public void deleteImage(String imagePath) throws IOException {
-        
+
         // Ricaviamo il nome del file dall'URL completo
         String fileName = imagePath.substring(imagePath.lastIndexOf("/") + 1);
-        
+
         // URL per fare la DELETE su Supabase Storage
         String deleteUrl = supabaseUrl + supabaseBucket + fileName;
 
@@ -116,10 +120,10 @@ public class ImageServiceImpl implements ImageService {
         try {
             // 1. Chiamata DELETE a Supabase Cloud
             restTemplate.exchange(deleteUrl, HttpMethod.DELETE, requestEntity, String.class);
-            
+
             // 2. Chiamata di cancellazione sul DB locale tramite il repository
             imageRepository.deleteByPath(imagePath);
-            
+
         } catch (Exception e) {
             throw new IOException("Errore durante l'eliminazione dell'immagine", e);
         }

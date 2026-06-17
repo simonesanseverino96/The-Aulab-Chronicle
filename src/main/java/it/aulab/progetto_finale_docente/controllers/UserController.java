@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import it.aulab.progetto_finale_docente.models.Role;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,20 +34,29 @@ import jakarta.validation.Valid;
 @Controller
 public class UserController {
 
-    @Autowired
-    private ArticleService articleService;
+    private final ArticleService articleService;
+    private final UserService userService;
+    private final ArticleRepository articleRepository;
+    private final it.aulab.progetto_finale_docente.repositories.UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final CareerRequestRepository careerRequestRepository;
+    private final CategoryService categoryService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ArticleRepository articleRepository;
-
-    @Autowired
-    private it.aulab.progetto_finale_docente.repositories.UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
+    public UserController(ArticleService articleService,
+            UserService userService,
+            ArticleRepository articleRepository,
+            it.aulab.progetto_finale_docente.repositories.UserRepository userRepository,
+            RoleRepository roleRepository,
+            CareerRequestRepository careerRequestRepository,
+            CategoryService categoryService) {
+        this.articleService = articleService;
+        this.userService = userService;
+        this.articleRepository = articleRepository;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.careerRequestRepository = careerRequestRepository;
+        this.categoryService = categoryService;
+    }
 
     // Rotta di home
     @GetMapping("/")
@@ -170,12 +178,6 @@ public class UserController {
         redirectAttributes.addFlashAttribute("successMessage", "Ruolo aggiornato con successo!");
         return "redirect:/admin/users";
     }
-
-    @Autowired
-    private CareerRequestRepository careerRequestRepository;
-
-    @Autowired
-    private CategoryService categoryService;
 
     // Rotta per la dashboard dell'admin
     @GetMapping("/admin/dashboard")

@@ -1,6 +1,5 @@
 package it.aulab.progetto_finale_docente.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,11 +12,14 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class NotificationInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private CareerRequestRepository careerRequestRepository;
+    private final CareerRequestRepository careerRequestRepository;
+    private final ArticleRepository articleRepository;
 
-    @Autowired
-    private ArticleRepository articleRepository;
+    public NotificationInterceptor(CareerRequestRepository careerRequestRepository,
+            ArticleRepository articleRepository) {
+        this.careerRequestRepository = careerRequestRepository;
+        this.articleRepository = articleRepository;
+    }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,

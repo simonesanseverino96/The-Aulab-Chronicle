@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,14 +25,17 @@ import jakarta.validation.Valid;
 @RequestMapping("/categories")
 public class CategoryController {
 
-    @Autowired
-    private ArticleService articleService;
+    private final ArticleService articleService;
+    private final CategoryService categoryService;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    public CategoryController(ArticleService articleService,
+            CategoryService categoryService,
+            ModelMapper modelMapper) {
+        this.articleService = articleService;
+        this.categoryService = categoryService;
+        this.modelMapper = modelMapper;
+    }
 
     // Rotta per la ricerca degli articoli in base alla categoria
     @GetMapping("/search/{id}")

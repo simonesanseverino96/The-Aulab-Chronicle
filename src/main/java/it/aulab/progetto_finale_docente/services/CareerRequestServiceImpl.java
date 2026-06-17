@@ -2,7 +2,6 @@ package it.aulab.progetto_finale_docente.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,17 +15,20 @@ import it.aulab.progetto_finale_docente.repositories.UserRepository;
 @Service
 public class CareerRequestServiceImpl implements CareerRequestService {
 
-    @Autowired
-    private CareerRequestRepository careerRequestRepository;
+    private final CareerRequestRepository careerRequestRepository;
+    private final EmailService emailService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
+    public CareerRequestServiceImpl(CareerRequestRepository careerRequestRepository,
+            EmailService emailService,
+            UserRepository userRepository,
+            RoleRepository roleRepository) {
+        this.careerRequestRepository = careerRequestRepository;
+        this.emailService = emailService;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+    }
 
     @Override
     @Transactional

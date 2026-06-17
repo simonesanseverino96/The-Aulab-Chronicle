@@ -1,6 +1,5 @@
 package it.aulab.progetto_finale_docente.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -10,11 +9,14 @@ import it.aulab.progetto_finale_docente.repositories.CareerRequestRepository;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    @Autowired
-    private ArticleRepository articleRepository;
+    private final ArticleRepository articleRepository;
+    private final CareerRequestRepository careerRequestRepository;
 
-    @Autowired
-    private CareerRequestRepository careerRequestRepository;
+    public GlobalControllerAdvice(ArticleRepository articleRepository,
+            CareerRequestRepository careerRequestRepository) {
+        this.articleRepository = articleRepository;
+        this.careerRequestRepository = careerRequestRepository;
+    }
 
     @ModelAttribute("articlesToBeRevised")
     public long articlesToBeRevised() {

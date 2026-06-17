@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,20 +25,23 @@ import it.aulab.progetto_finale_docente.repositories.UserRepository;
 @Service
 public class ArticleService implements CrudService<ArticleDto, Article, Long> {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ArticleRepository articleRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
-    private ImageService imageService;
+    private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
+    private final ModelMapper modelMapper;
+    private final ImageService imageService;
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    public ArticleService(UserRepository userRepository,
+            ArticleRepository articleRepository,
+            ModelMapper modelMapper,
+            ImageService imageService) {
+        this.userRepository = userRepository;
+        this.articleRepository = articleRepository;
+        this.modelMapper = modelMapper;
+        this.imageService = imageService;
+    }
 
     @Override
     @org.springframework.transaction.annotation.Transactional
